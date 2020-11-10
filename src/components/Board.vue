@@ -1,18 +1,13 @@
 <template>
   <div class="container">
-    <h1>{{ this.name }}</h1>
+    <h1>{{ this.data.title }}</h1>
     <div class="row d-flex">
 
-      <div class="column d-flex flex-column m-2">
-        <h4>Column Title</h4>
-        <b-card title="Card Title" style="max-width: 20rem;">
+      <div v-for="column in this.data.columns" :key="column.id" class="column d-flex flex-column m-2">
+        <h4>{{ column.title }}</h4>
+        <b-card v-for="card in column.cards" :key="card.id" :title=card.title style="max-width: 20rem;">
           <b-card-text>
-            Some quick example text to build on the card title and make up the bulk of the card's content.
-          </b-card-text>
-        </b-card>
-        <b-card title="Card Title" style="max-width: 20rem;">
-          <b-card-text>
-            Some quick example text to build on the card title and make up the bulk of the card's content.
+            {{ card.content }}
           </b-card-text>
         </b-card>
       </div>
@@ -22,11 +17,13 @@
 </template>
 
 <script>
+import { store } from "@/store";
+
 export default {
   name: "Board",
   data() {
     return {
-      name: "Test Board"
+      data: store.boards["0"]
     }
   }
 }
