@@ -11,12 +11,12 @@ export const store = Vue.observable({
                     cards: [
                         {
                             id: 0,
-                            title: "Test Card 1",
+                            title: "Test Card 0",
                             content: "Some quick example text to build on the card title and make up the bulk of the card's content."
                         },
                         {
                             id: 1,
-                            title: "Test Card 2",
+                            title: "Test Card 1",
                             content: "Some quick example text to build on the card title and make up the bulk of the card's content."
                         }
                     ]
