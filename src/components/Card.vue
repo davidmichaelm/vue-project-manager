@@ -1,5 +1,9 @@
 <template>
-  <b-card :title=this.cardData.title style="max-width: 20rem;">
+  <b-card>
+    <div class="d-flex">
+      <b-card-title>{{ this.cardData.title }}</b-card-title>
+      <a class="ml-auto" href="#" @click="removeCard">x</a>
+    </div>
     <b-card-text>
       {{ this.cardData.content }}
     </b-card-text>
@@ -9,7 +13,12 @@
 <script>
 export default {
   name: "Card",
-  props: ["cardData"]
+  props: ["cardData"],
+  methods: {
+    removeCard() {
+      this.$emit("removeCard");
+    }
+  }
 }
 </script>
 
