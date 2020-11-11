@@ -1,11 +1,15 @@
 <template>
   <div class="col-4 d-flex flex-column m-2">
     <div class="d-flex p-2">
-      <h4>{{ this.columnData.title }}</h4>
+      <h4>
+      <label>
+        <input type="text" v-model="columnDataLocal.title" @keypress="columnDataChanged"/>
+      </label>
+      </h4>
       <h4 class="ml-auto"><a href="#" @click="addCard">+</a></h4>
     </div>
 
-    <Card v-for="(card, index) in this.columnData.cards" :key="card.id" :card-data=card @removeCard="removeCard(index)" />
+    <Card v-for="(card, index) in this.columnData.cards" :key="card.id" :card-data=card @remove-card="removeCard(index)" @card-data-changed="columnDataChanged" />
   </div>
 </template>
 
@@ -18,6 +22,11 @@ export default {
     Card
   },
   props: ["columnData"],
+  data() {
+    return {
+      columnDataLocal: this.columnData
+    }
+  },
   methods: {
     getMaxId() {
       return Math.max(...this.columnData.cards.map(c => c.id), 0);
@@ -33,6 +42,9 @@ export default {
     },
     removeCard(index) {
       this.columnData.cards.splice(index, 1)
+    },
+    columnDataChanged() {
+      this.$emit("column-data-changed", this.columnDataLocal);
     }
   }
 }
@@ -42,5 +54,13 @@ export default {
 .col-4 {
   display: inline-block !important;
   float: none;
+}
+
+input {
+  border: none;
+}
+
+input:focus {
+  outline: none;
 }
 </style>
