@@ -1,5 +1,5 @@
 <template>
-  <div class="column d-flex flex-column m-2" style="max-width: 20rem;">
+  <div class="col-4 d-flex flex-column m-2">
     <div class="d-flex p-2">
       <h4>{{ this.columnData.title }}</h4>
       <h4 class="ml-auto"><a href="#" @click="addCard">+</a></h4>
@@ -39,5 +39,8 @@ export default {
 </script>
 
 <style scoped>
-
+.col-4 {
+  display: inline-block !important;
+  float: none;
+}
 </style>

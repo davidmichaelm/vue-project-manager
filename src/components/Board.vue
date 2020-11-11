@@ -1,8 +1,11 @@
 <template>
-  <div class="container">
+  <div class="container" >
     <h1>{{ this.data.title }}</h1>
-    <div class="row d-flex">
+    <div class="row d-flex flex-nowrap">
       <Column v-for="column in this.data.columns" :key="column.id" :column-data="column"></Column>
+      <div class="col-4 m-2 p-2">
+        <h4><a href="#" @click="addColumn">+ Add a column</a></h4>
+      </div>
     </div>
   </div>
 </template>
@@ -20,6 +23,14 @@ export default {
     return {
       data: store.boards["0"]
     }
+  },
+  methods: {
+    addColumn() {
+      this.data.columns.push({
+        title: "New Column",
+        cards: []
+      })
+    }
   }
 }
 </script>
@@ -28,4 +39,14 @@ export default {
  a {
    text-decoration: none;
  }
+
+ .container > .row {
+   overflow-x: auto;
+   display: flex;
+ }
+
+ .col-4 {
+   flex: 0 0 auto;
+ }
+
 </style>
