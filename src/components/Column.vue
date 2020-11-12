@@ -1,25 +1,35 @@
 <template>
-  <div class="col-4 d-flex flex-column m-2">
+  <div class="col-xs-6 col-md-5 col-lg-4 col-xl-3 d-flex flex-column m-2">
     <div class="d-flex p-2">
-      <h4>
-      <label>
-        <input type="text" v-model="columnDataLocal.title" @keypress="columnDataChanged"/>
-      </label>
-      </h4>
-      <h4 class="ml-auto"><a href="#" @click="addCard">+</a></h4>
+      <div class="mr-auto h5">
+          <label>
+            <input type="text" v-model="columnDataLocal.title" @keypress="columnDataChanged"/>
+          </label>
+      </div>
+
+      <a href="#" class="h4">
+        <b-icon-three-dots />
+      </a>
+      <a href="#"  class="h4" @click="addCard">
+        <b-icon-plus />
+      </a>
     </div>
 
-    <Card v-for="(card, index) in this.columnData.cards" :key="card.id" :card-data=card @remove-card="removeCard(index)" @card-data-changed="columnDataChanged" />
+    <Card v-for="(card, index) in this.columnData.cards" :key="card.id" :card-data=card @remove-card="removeCard(index)"
+          @card-data-changed="columnDataChanged"/>
   </div>
 </template>
 
 <script>
 import Card from "@/components/Card";
+import {BIconThreeDots, BIconPlus} from 'bootstrap-vue'
 
 export default {
   name: "Column",
   components: {
-    Card
+    Card,
+    BIconThreeDots,
+    BIconPlus
   },
   props: ["columnData"],
   data() {
@@ -51,13 +61,14 @@ export default {
 </script>
 
 <style scoped>
-.col-4 {
+.col-xs-6 {
   display: inline-block !important;
   float: none;
 }
 
 input {
   border: none;
+  width: 100%;
 }
 
 input:focus {

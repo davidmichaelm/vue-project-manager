@@ -1,7 +1,7 @@
 <template>
   <b-card>
     <div class="d-flex">
-      <b-card-title><input type="text" v-model="cardDataLocal.title"></b-card-title>
+      <b-card-title class="h5"><input type="text" v-model="cardDataLocal.title"></b-card-title>
       <a class="ml-auto" href="#" @click="removeCard">x</a>
     </div>
     <b-card-text>
@@ -40,6 +40,8 @@ export default {
 
 <style scoped>
 input {
+  width: 100%;
+
   border: none;
 }
 
@@ -48,6 +50,8 @@ input:focus {
 }
 
 textarea {
+  width: 100%;
+
   border: none;
   overflow: visible;
   outline: none;
