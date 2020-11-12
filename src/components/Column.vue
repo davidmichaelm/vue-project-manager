@@ -2,16 +2,20 @@
   <div class="col-xs-6 col-md-5 col-lg-4 col-xl-3 d-flex flex-column m-2">
     <div class="d-flex p-2">
       <div class="mr-auto h5">
-          <label>
-            <input type="text" v-model="columnDataLocal.title" @keypress="columnDataChanged"/>
-          </label>
+        <label>
+          <input type="text" v-model="columnDataLocal.title" @keypress="columnDataChanged"/>
+        </label>
       </div>
 
-      <a href="#" class="h4">
-        <b-icon-three-dots />
+
+      <a href="#" class="h4" :id="'col-dots-' + columnDataLocal.id">
+        <b-icon-three-dots/>
       </a>
-      <a href="#"  class="h4" @click="addCard">
-        <b-icon-plus />
+      <b-popover :target="'col-dots-' + columnDataLocal.id" triggers="focus" placement="bottom">
+        <button class="btn btn-danger" @click="removeColumn">Delete</button>
+      </b-popover>
+      <a href="#" class="h4" @click="addCard">
+        <b-icon-plus/>
       </a>
     </div>
 
@@ -51,10 +55,13 @@ export default {
       this.columnData.cards.push(newCard);
     },
     removeCard(index) {
-      this.columnData.cards.splice(index, 1)
+      this.columnData.cards.splice(index, 1);
     },
     columnDataChanged() {
       this.$emit("column-data-changed", this.columnDataLocal);
+    },
+    removeColumn() {
+      this.$emit("remove-column", this.columnDataLocal.id);
     }
   }
 }

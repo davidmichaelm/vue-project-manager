@@ -2,7 +2,7 @@
   <div class="container" >
     <h1>{{ this.data.title }}</h1>
     <div class="row d-flex flex-nowrap">
-      <Column v-for="column in this.data.columns" :key="column.id" :column-data="column" @column-data-changed="handleColumnDataChanged"></Column>
+      <Column v-for="(column, index) in this.data.columns" :key="column.id" :column-data="column" @column-data-changed="handleColumnDataChanged" @remove-column="handleRemoveColumn(index)"></Column>
       <div class="col-4 m-2 p-2">
         <h4><a href="#" @click="addColumn">+ Add a column</a></h4>
       </div>
@@ -33,6 +33,10 @@ export default {
     },
     handleColumnDataChanged() {
       console.log("changed")
+    },
+    handleRemoveColumn(index) {
+      console.log(index)
+      this.data.columns.splice(index, 1);
     }
   }
 }
