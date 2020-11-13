@@ -3,7 +3,7 @@
     <h1>{{ this.data.title }}</h1>
     <div class="row d-flex flex-nowrap">
       <Column v-for="(column, index) in this.data.columns" :key="column.id" :column-data="column" @column-data-changed="handleColumnDataChanged" @remove-column="handleRemoveColumn(index)"></Column>
-      <div class="col-4 m-2 p-2">
+      <div class="board-column col-4 col-md-5 m-2 p-2">
         <h4><a href="#" @click="addColumn">+ Add a column</a></h4>
       </div>
     </div>
@@ -52,7 +52,7 @@ export default {
    display: flex;
  }
 
- .col-4 {
+ .board-column {
    flex: 0 0 auto;
  }
 

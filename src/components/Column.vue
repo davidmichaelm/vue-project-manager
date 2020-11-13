@@ -1,5 +1,5 @@
 <template>
-  <div class="col-xs-6 col-md-5 col-lg-4 col-xl-3 d-flex flex-column m-2">
+  <div class="board-column col-7 col-md-5 col-lg-4 col-xl-3 d-flex flex-column m-2">
     <div class="d-flex p-2">
       <div class="mr-auto h5">
         <label>
@@ -68,7 +68,7 @@ export default {
 </script>
 
 <style scoped>
-.col-xs-6 {
+.board-column {
   display: inline-block !important;
   float: none;
 }
