@@ -1,11 +1,11 @@
 <template>
   <b-card>
     <div class="d-flex">
-      <b-card-title class="h5"><input type="text" v-model="cardDataLocal.title"></b-card-title>
+      <b-card-title class="h5"><input type="text" placeholder="Card title" v-model="cardDataLocal.title"></b-card-title>
       <a class="ml-auto" href="#" @click="removeCard">x</a>
     </div>
     <b-card-text>
-      <textarea ref="textarea" type="text" v-model="cardDataLocal.content" @input="cardDataChanged"></textarea>
+      <textarea placeholder="Enter some text..." ref="textarea" type="text" v-model="cardDataLocal.content" @input="cardDataChanged"></textarea>
     </b-card-text>
   </b-card>
 </template>

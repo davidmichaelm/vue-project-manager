@@ -27,7 +27,7 @@ export default {
   methods: {
     addColumn() {
       this.data.columns.push({
-        title: "New Column",
+        title: "",
         cards: []
       })
     },

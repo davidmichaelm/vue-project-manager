@@ -3,7 +3,7 @@
     <div class="d-flex p-2">
       <div class="mr-auto h5">
         <label>
-          <input type="text" v-model="columnDataLocal.title" @keypress="columnDataChanged"/>
+          <input type="text" placeholder="Column name" v-model="columnDataLocal.title" @keypress="columnDataChanged"/>
         </label>
       </div>
 
@@ -49,8 +49,8 @@ export default {
       let id = this.getMaxId() + 1
       let newCard = {
         id: id,
-        title: "Test Card " + id,
-        content: "Some quick example text to build on the card title and make up the bulk of the card's content."
+        title: "",
+        content: ""
       }
       this.columnData.cards.push(newCard);
     },
