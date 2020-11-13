@@ -8,7 +8,7 @@
       </div>
 
 
-      <a href="#" class="h4" :id="'col-dots-' + columnDataLocal.id">
+      <a href="#" class="h4" :id="'col-dots-' + columnDataLocal.id" tabindex="0">
         <b-icon-three-dots/>
       </a>
       <b-popover :target="'col-dots-' + columnDataLocal.id" triggers="focus" placement="bottom">
