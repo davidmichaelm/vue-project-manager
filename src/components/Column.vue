@@ -2,13 +2,20 @@
   <div class="board-column col-7 col-md-5 col-lg-4 col-xl-3 d-flex flex-column m-2">
     <div class="d-flex p-2">
       <label class="mr-auto h5">
-        <input type="text" placeholder="Column name" v-model="columnDataLocal.title" @keypress="columnDataChanged"/>
+        <input
+            type="text"
+            placeholder="Column name"
+            v-model="columnDataLocal.title"
+            @keypress="handleTitleKeypress" />
       </label>
 
       <a href="#" class="h4" :id="'col-dots-' + columnDataLocal.id" tabindex="0">
         <b-icon-three-dots/>
       </a>
-      <b-popover :target="'col-dots-' + columnDataLocal.id" triggers="focus" placement="bottom">
+      <b-popover
+          :target="'col-dots-' + columnDataLocal.id"
+          triggers="focus"
+          placement="bottom">
         <button class="btn btn-danger" @click="removeColumn">Delete</button>
       </b-popover>
       <a href="#" class="h4" @click="addCard">
@@ -16,8 +23,13 @@
       </a>
     </div>
 
-    <Card v-for="(card, index) in columnData.cards" :key="card.id" :card-data=card @remove-card="removeCard(index)"
-          @card-data-changed="columnDataChanged"/>
+    <Card
+        v-for="(card, index) in columnData.cards"
+        :key="card.id"
+        ref="card"
+        :card-data=card
+        @remove-card="removeCard(index)"
+        @card-data-changed="columnDataChanged" />
   </div>
 </template>
 
@@ -53,6 +65,21 @@ export default {
     },
     removeCard(index) {
       this.columnData.cards.splice(index, 1);
+    },
+    handleTitleKeypress(event) {
+      if (event.key === "Enter") {
+        // Add a card if there aren't any
+        if (this.columnDataLocal.cards.length === 0) {
+          this.addCard();
+        }
+
+        // Then focus the first card
+        this.$nextTick(() =>
+            this.$refs.card[0].focusTitle()
+        );
+      } else {
+        this.columnDataChanged();
+      }
     },
     columnDataChanged() {
       this.$emit("column-data-changed", this.columnDataLocal);

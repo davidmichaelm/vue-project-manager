@@ -1,11 +1,24 @@
 <template>
   <b-card>
     <div class="d-flex">
-      <b-card-title class="h5"><input type="text" placeholder="Card title" v-model="cardDataLocal.title"></b-card-title>
+      <b-card-title class="h5">
+        <input
+            type="text"
+            ref="title"
+            placeholder="Card title"
+            v-model="cardDataLocal.title"
+            @keypress="handleTitleKeypress">
+      </b-card-title>
       <a class="ml-auto" href="#" @click="removeCard">x</a>
     </div>
     <b-card-text>
-      <textarea placeholder="Enter some text..." ref="textarea" type="text" v-model="cardDataLocal.content" @input="cardDataChanged"></textarea>
+      <textarea
+          placeholder="Enter some text..."
+          ref="textarea"
+          type="text"
+          v-model="cardDataLocal.content"
+          @input="cardDataChanged">
+      </textarea>
     </b-card-text>
   </b-card>
 </template>
@@ -30,6 +43,14 @@ export default {
     cardDataChanged() {
       this.setContentHeight();
       this.$emit("card-data-changed");
+    },
+    handleTitleKeypress(event) {
+      if (event.key === "Enter") {
+        this.$refs.textarea.focus();
+      }
+    },
+    focusTitle() {
+      this.$refs.title.focus();
     }
   },
   mounted() {

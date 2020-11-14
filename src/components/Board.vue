@@ -32,7 +32,7 @@ export default {
       })
     },
     handleColumnDataChanged() {
-      console.log("changed")
+      //console.log("changed")
     },
     handleRemoveColumn(index) {
       console.log(index)
