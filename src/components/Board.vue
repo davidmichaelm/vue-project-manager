@@ -1,8 +1,8 @@
 <template>
   <div class="container" >
-    <h1>{{ this.data.title }}</h1>
+    <input class="h1" type="text" v-model="data.title">
     <div class="row d-flex flex-nowrap">
-      <Column v-for="(column, index) in this.data.columns" :key="column.id" :column-data="column" @column-data-changed="handleColumnDataChanged" @remove-column="handleRemoveColumn(index)"></Column>
+      <Column v-for="(column, index) in data.columns" :key="column.id" :column-data="column" @column-data-changed="handleColumnDataChanged" @remove-column="handleRemoveColumn(index)"></Column>
       <div class="board-column col-4 col-md-5 m-2 p-2">
         <h4><a href="#" @click="addColumn">+ Add a column</a></h4>
       </div>
@@ -46,6 +46,17 @@ export default {
  a {
    text-decoration: none;
  }
+
+ input {
+   width: 100%;
+
+   border: none;
+ }
+
+ input:focus {
+   outline: none;
+ }
+
 
  .container > .row {
    overflow-x: auto;

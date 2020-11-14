@@ -1,12 +1,9 @@
 <template>
   <div class="board-column col-7 col-md-5 col-lg-4 col-xl-3 d-flex flex-column m-2">
     <div class="d-flex p-2">
-      <div class="mr-auto h5">
-        <label>
-          <input type="text" placeholder="Column name" v-model="columnDataLocal.title" @keypress="columnDataChanged"/>
-        </label>
-      </div>
-
+      <label class="mr-auto h5">
+        <input type="text" placeholder="Column name" v-model="columnDataLocal.title" @keypress="columnDataChanged"/>
+      </label>
 
       <a href="#" class="h4" :id="'col-dots-' + columnDataLocal.id" tabindex="0">
         <b-icon-three-dots/>
@@ -19,7 +16,7 @@
       </a>
     </div>
 
-    <Card v-for="(card, index) in this.columnData.cards" :key="card.id" :card-data=card @remove-card="removeCard(index)"
+    <Card v-for="(card, index) in columnData.cards" :key="card.id" :card-data=card @remove-card="removeCard(index)"
           @card-data-changed="columnDataChanged"/>
   </div>
 </template>
