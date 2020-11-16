@@ -9,14 +9,14 @@
       <a href="#" :id="'add-tag-' + id">
         <b-icon-plus class="h4 mb-0 text-primary"/>
       </a>
-      <AddTagPopover @addTag="addTag" :target="'add-tag-' + id" />
+      <AddTagPopover @addTag="addTag" :target="'add-tag-' + id" :all-tag-data="allTagData" />
     </div>
     <div v-else>
       <a href="#" :id="'add-tag-' + id" class="text-primary d-flex align-items-center">
         <b-icon-plus class="h4 mb-0"/>
         Add a tag
       </a>
-      <AddTagPopover @addTag="addTag" :target="'add-tag-' + id" />
+      <AddTagPopover @addTag="addTag" :target="'add-tag-' + id" :all-tag-data="allTagData" />
     </div>
 
   </div>

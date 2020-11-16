@@ -7,8 +7,13 @@
       triggers="focus"
       placement="bottom">
     <div class="d-flex flex-row">
-      <input type="text" :class="newTagColor + ' text-light'" ref="tagInput" v-model="newTag"
-             @keypress="handleKeypress">
+      <input
+          type="text"
+          :class="newTagColor + ' text-light'"
+          ref="tagInput"
+          v-model="newTag"
+          @keypress="handleKeypress"
+          @keyup="handleKeyUp">
       <a href="#" @click="addTag">
         <b-icon-plus class="h4 mb-0 text-primary"/>
       </a>
@@ -30,7 +35,7 @@ import {BIconPlus} from "bootstrap-vue";
 
 export default {
   name: "AddTagPopover",
-  props: ["target"],
+  props: ["target", "allTagData"],
   components: {
     BIconPlus
   },
@@ -60,6 +65,13 @@ export default {
     handleKeypress(event) {
       if (event.key === "Enter") {
         this.addTag();
+      }
+    },
+    handleKeyUp() {
+      if (Object.prototype.hasOwnProperty.call(this.allTagData, this.newTag)) {
+        this.newTagColor = this.allTagData[this.newTag]["backgroundColor"];
+      } else {
+        this.newTagColor = "bg-primary";
       }
     },
     setTagColor(color) {
