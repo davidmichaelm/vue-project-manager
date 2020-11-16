@@ -20,16 +20,23 @@
           @input="cardDataChanged">
       </textarea>
     </b-card-text>
+
+    <TagBar :tags="cardDataLocal.tags" />
   </b-card>
 </template>
 
 <script>
+import TagBar from "@/components/TagBar";
+
 export default {
   name: "Card",
   props: ["cardData"],
+  components: {
+    TagBar
+  },
   data() {
     return {
-      cardDataLocal: this.cardData,
+      cardDataLocal: this.cardData
     }
   },
   methods: {
@@ -82,5 +89,9 @@ textarea {
   box-shadow: none;
 
   resize: none; /*remove the resize handle on the bottom right*/
+}
+
+a {
+  text-decoration: none;
 }
 </style>
