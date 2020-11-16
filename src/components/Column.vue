@@ -59,7 +59,8 @@ export default {
       let newCard = {
         id: id,
         title: "",
-        content: ""
+        content: "",
+        tags: []
       }
       this.columnData.cards.push(newCard);
     },
