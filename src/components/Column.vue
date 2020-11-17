@@ -23,26 +23,31 @@
       </a>
     </div>
 
-    <Card
-        v-for="(card, index) in columnData.cards"
-        :key="card.id"
-        ref="card"
-        :card-data=card
-        @remove-card="removeCard(index)"
-        @card-data-changed="columnDataChanged" />
+    <draggable v-model="columnDataLocal.cards" group="cards" :emptyInsertThreshold="100">
+        <Card
+            v-for="(card, index) in columnData.cards"
+            :key="card.id"
+            ref="card"
+            :card-data=card
+            @remove-card="removeCard(index)"
+            @card-data-changed="columnDataChanged" />
+    </draggable>
+
   </div>
 </template>
 
 <script>
 import Card from "@/components/Card";
-import {BIconThreeDots, BIconPlus} from 'bootstrap-vue'
+import {BIconThreeDots, BIconPlus} from 'bootstrap-vue';
+import draggable from "vuedraggable";
 
 export default {
   name: "Column",
   components: {
     Card,
     BIconThreeDots,
-    BIconPlus
+    BIconPlus,
+    draggable
   },
   props: ["columnData"],
   data() {
@@ -51,11 +56,8 @@ export default {
     }
   },
   methods: {
-    getMaxId() {
-      return Math.max(...this.columnData.cards.map(c => c.id), 0);
-    },
     addCard() {
-      let id = this.getMaxId() + 1
+      let id = Math.random();
       let newCard = {
         id: id,
         title: "",
@@ -96,6 +98,10 @@ export default {
 .board-column {
   display: inline-block !important;
   float: none;
+}
+
+.empty-column {
+  height: 144px;
 }
 
 input {

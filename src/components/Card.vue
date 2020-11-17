@@ -1,5 +1,5 @@
 <template>
-  <b-card>
+  <b-card class="draggable">
     <div class="d-flex">
       <b-card-title class="h5">
         <input
@@ -93,5 +93,9 @@ textarea {
 
 a {
   text-decoration: none;
+}
+
+.draggable {
+  cursor: pointer;
 }
 </style>
