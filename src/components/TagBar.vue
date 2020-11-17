@@ -4,6 +4,7 @@
       <Tag
           v-for="(tag, index) in tags"
           :name="tag"
+          :tagData="allTagData[tag]"
           :key="tag"
           @removeTag="removeTag(index)"/>
       <a href="#" :id="'add-tag-' + id">

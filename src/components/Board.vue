@@ -1,10 +1,14 @@
 <template>
-  <div class="container" >
-    <input class="h1" type="text" v-model="data.title">
-    <div class="row d-flex flex-nowrap">
-      <Column v-for="(column, index) in data.columns" :key="column.id" :column-data="column" @column-data-changed="handleColumnDataChanged" @remove-column="handleRemoveColumn(index)"></Column>
-      <div class="board-column col-4 col-md-5 m-2 p-2">
-        <h4><a href="#" @click="addColumn">+ Add a column</a></h4>
+  <div class="container">
+    <div class="row">
+      <input class="h1" type="text" v-model="data.title">
+      <div class="col-12">
+        <div class="board row d-flex flex-nowrap">
+          <Column v-for="(column, index) in data.columns" :key="column.id" :column-data="column" @column-data-changed="handleColumnDataChanged" @remove-column="handleRemoveColumn(index)"></Column>
+          <div class="board-column col-4 col-md-5 m-2 p-2">
+            <h4><a href="#" @click="addColumn">+ Add a column</a></h4>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -58,9 +62,8 @@ export default {
  }
 
 
- .container > .row {
+ .board {
    overflow-x: auto;
-   display: flex;
  }
 
  .board-column {

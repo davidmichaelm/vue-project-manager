@@ -1,6 +1,6 @@
 <template>
   <div class="m-1 mb-2">
-    <span :class="'p-1 tag ' + this.backgroundColor + ' ' + this.color">{{ name }}</span>
+    <span :class="'p-1 tag ' + tagData.backgroundColor + ' ' + tagData.color">{{ name }}</span>
     <b-icon-x-circle
         class="closeButton bg-light border-dark rounded-circle"
         variant="dark"
@@ -9,19 +9,16 @@
 </template>
 
 <script>
-import {store} from "@/store";
 import {BIconXCircle} from "bootstrap-vue";
 
 export default {
   name: "Tag",
-  props: ["name"],
+  props: ["name", "tagData"],
   components: {
     BIconXCircle
   },
   data() {
     return {
-      backgroundColor: store.boards[0].tags[this.name].backgroundColor,
-      color: store.boards[0].tags[this.name].color
     }
   },
   methods: {
@@ -35,6 +32,7 @@ export default {
 <style scoped>
 div {
   position: relative;
+  display: inline-block;
 }
 
 .closeButton {
