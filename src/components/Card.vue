@@ -6,7 +6,7 @@
             type="text"
             ref="title"
             placeholder="Card title"
-            v-model="cardDataLocal.title"
+            v-model="title"
             @keypress="handleTitleKeypress">
       </b-card-title>
       <a class="ml-auto" href="#" @click="removeCard">x</a>
@@ -16,40 +16,62 @@
           placeholder="Enter some text..."
           ref="textarea"
           type="text"
-          v-model="cardDataLocal.content"
+          v-model="content"
           @input="cardDataChanged">
       </textarea>
     </b-card-text>
 
-    <TagBar :tags="cardDataLocal.tags" />
+    <TagBar :card-id="id"/>
   </b-card>
 </template>
 
 <script>
 import TagBar from "@/components/TagBar";
+import { mapActions } from "vuex";
 
 export default {
   name: "Card",
-  props: ["cardData"],
+  props: ["cardData", "columnId"],
   components: {
     TagBar
   },
   data() {
     return {
-      cardDataLocal: this.cardData
+      id: this.cardData.id,
+      tags: this.cardData.tags
+    }
+  },
+  computed: {
+    title: {
+      get() {
+        return this.cardData.title;
+      },
+      set(value) {
+        this.setCardTitle({
+          id: this.id,
+          title: value
+        })
+      }
+    },
+    content: {
+      get() {
+        return this.cardData.content;
+      },
+      set(value) {
+        this.setCardContent({
+          id: this.id,
+          content: value
+        })
+      }
     }
   },
   methods: {
-    removeCard() {
-      this.$emit("remove-card");
-    },
     setContentHeight() {
       this.$refs.textarea.style.height = "";
       this.$refs.textarea.style.height = this.$refs.textarea.scrollHeight + "px";
     },
     cardDataChanged() {
       this.setContentHeight();
-      this.$emit("card-data-changed");
     },
     handleTitleKeypress(event) {
       if (event.key === "Enter") {
@@ -58,7 +80,18 @@ export default {
     },
     focusTitle() {
       this.$refs.title.focus();
-    }
+    },
+    removeCard() {
+      this.$store.dispatch("removeCard", {
+        columnId: this.columnId,
+        cardId: this.id
+      });
+    },
+    ...mapActions([
+        "setCardTitle",
+        "setCardContent",
+        "setCardTags"
+    ])
   },
   mounted() {
     this.setContentHeight();

@@ -4,7 +4,7 @@
       <input class="h1" type="text" v-model="data.title">
       <div class="col-12">
         <div class="board row d-flex flex-nowrap">
-          <Column v-for="(column, index) in data.columns" :key="column.id" :column-data="column" @column-data-changed="handleColumnDataChanged" @remove-column="handleRemoveColumn(index)"></Column>
+          <Column v-for="column in data.columns" :key="column.id" :column-data="column"></Column>
           <div class="board-column col-4 col-md-5 m-2 p-2">
             <h4><a href="#" @click="addColumn">+ Add a column</a></h4>
           </div>
@@ -15,7 +15,6 @@
 </template>
 
 <script>
-import { store } from "@/store";
 import Column from "@/components/Column";
 
 export default {
@@ -25,22 +24,12 @@ export default {
   },
   data() {
     return {
-      data: store.boards["0"]
+      data: this.$store.state.board
     }
   },
   methods: {
     addColumn() {
-      this.data.columns.push({
-        title: "",
-        cards: []
-      })
-    },
-    handleColumnDataChanged() {
-      //console.log("changed")
-    },
-    handleRemoveColumn(index) {
-      console.log(index)
-      this.data.columns.splice(index, 1);
+      this.$store.dispatch("addColumn");
     }
   }
 }

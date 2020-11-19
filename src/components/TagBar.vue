@@ -2,11 +2,11 @@
   <div>
     <div v-if="tags.length !== 0" class="d-flex flex-wrap flex-row align-items-center">
       <Tag
-          v-for="(tag, index) in tags"
+          v-for="tag in tags"
           :name="tag"
           :tagData="allTagData[tag]"
           :key="tag"
-          @removeTag="removeTag(index)"/>
+          @removeTag="removeTag(tag)"/>
       <a href="#" :id="'add-tag-' + id">
         <b-icon-plus class="h4 mb-0 text-primary"/>
       </a>
@@ -24,14 +24,13 @@
 </template>
 
 <script>
-import { store } from "@/store";
 import Tag from "@/components/Tag";
 import { BIconPlus } from "bootstrap-vue";
 import AddTagPopover from "@/components/AddTagPopover";
 
 export default {
   name: "TagBar",
-  props: ["tags", "cardId"],
+  props: ["cardId"],
   components: {
     Tag,
     BIconPlus,
@@ -39,7 +38,8 @@ export default {
   },
   data() {
     return {
-      allTagData: store.boards["0"].tags,
+      tags: this.$store.getters.getTagsByCardId(this.cardId),
+      allTagData: this.$store.state.board.tags,
       id: Math.random()
     }
   },
@@ -48,16 +48,25 @@ export default {
       if (this.tags.includes(newTag)) return;
 
       if (!(newTag in this.allTagData)) {
-        this.allTagData[newTag] = {
-          backgroundColor: newTagColor,
-          color: "text-white"
-        }
+        this.$store.dispatch("addTag", {
+          tag: newTag,
+          tagData: {
+            backgroundColor: newTagColor,
+            color: "text-white"
+          }
+        });
       }
 
-      this.tags.push(newTag);
+      this.$store.dispatch("addCardTag", {
+        cardId: this.cardId,
+        tag: newTag
+      });
     },
-    removeTag(index) { // TODO: props should not be mutated
-      this.tags.splice(index, 1);
+    removeTag(tag) {
+      this.$store.dispatch("removeCardTag", {
+        cardId: this.cardId,
+        tag: tag
+      });
     }
   }
 }

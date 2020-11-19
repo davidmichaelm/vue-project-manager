@@ -17,10 +17,6 @@ export default {
   components: {
     BIconXCircle
   },
-  data() {
-    return {
-    }
-  },
   methods: {
     removeTag() {
       this.$emit("removeTag");

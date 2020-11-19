@@ -5,32 +5,31 @@
         <input
             type="text"
             placeholder="Column name"
-            v-model="columnDataLocal.title"
+            v-model="title"
             @keypress="handleTitleKeypress" />
       </label>
 
-      <a href="#" class="h4" :id="'col-dots-' + columnDataLocal.id" tabindex="0">
+      <a href="#" class="h4" :id="'col-dots-' + id" tabindex="0">
         <b-icon-three-dots/>
       </a>
       <b-popover
-          :target="'col-dots-' + columnDataLocal.id"
+          :target="'col-dots-' + id"
           triggers="focus"
           placement="bottom">
-        <button class="btn btn-danger" @click="removeColumn">Delete</button>
+        <button class="btn btn-danger" @click="removeColumn(id)">Delete</button>
       </b-popover>
-      <a href="#" class="h4" @click="addCard">
+      <a href="#" class="h4" @click="addCard(id)">
         <b-icon-plus/>
       </a>
     </div>
 
-    <draggable v-model="columnDataLocal.cards" group="cards" :emptyInsertThreshold="100">
+    <draggable v-model="cards" group="cards" :emptyInsertThreshold="100">
         <Card
-            v-for="(card, index) in columnData.cards"
+            v-for="card in cards"
             :key="card.id"
             ref="card"
-            :card-data=card
-            @remove-card="removeCard(index)"
-            @card-data-changed="columnDataChanged" />
+            :column-id="id"
+            :card-data=card />
     </draggable>
 
   </div>
@@ -40,6 +39,7 @@
 import Card from "@/components/Card";
 import {BIconThreeDots, BIconPlus} from 'bootstrap-vue';
 import draggable from "vuedraggable";
+import { mapActions } from 'vuex'
 
 export default {
   name: "Column",
@@ -52,44 +52,51 @@ export default {
   props: ["columnData"],
   data() {
     return {
-      columnDataLocal: this.columnData
+      id: this.columnData.id
+    }
+  },
+  computed: {
+    title: {
+      get() {
+        return this.columnData.title;
+      },
+      set(value) {
+        this.setColumnTitle({
+          id: this.columnData.id,
+          title: value});
+      }
+    },
+    cards: {
+      get() {
+        return this.columnData.cards;
+      },
+      set(value) {
+        this.$store.dispatch("updateCardsList", {
+          columnId: this.id,
+          cards: value
+        });
+      }
     }
   },
   methods: {
-    addCard() {
-      let id = Math.random();
-      let newCard = {
-        id: id,
-        title: "",
-        content: "",
-        tags: []
-      }
-      this.columnData.cards.push(newCard);
-    },
-    removeCard(index) {
-      this.columnData.cards.splice(index, 1);
-    },
     handleTitleKeypress(event) {
       if (event.key === "Enter") {
         // Add a card if there aren't any
-        if (this.columnDataLocal.cards.length === 0) {
-          this.addCard();
+        if (this.cards.length === 0) {
+          this.addCard(this.id);
         }
 
         // Then focus the first card
         this.$nextTick(() =>
             this.$refs.card[0].focusTitle()
         );
-      } else {
-        this.columnDataChanged();
       }
     },
-    columnDataChanged() {
-      this.$emit("column-data-changed", this.columnDataLocal);
-    },
-    removeColumn() {
-      this.$emit("remove-column", this.columnDataLocal.id);
-    }
+    ...mapActions([
+        "removeColumn",
+        "setColumnTitle",
+        "addCard"
+    ])
   }
 }
 </script>
