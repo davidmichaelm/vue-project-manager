@@ -38,17 +38,23 @@ export default {
   },
   data() {
     return {
-      tags: this.$store.getters.getTagsByCardId(this.cardId),
-      allTagData: this.$store.state.board.tags,
       id: Math.random()
     }
   },
+  computed: {
+    tags() {
+      return this.$store.getters.getTagsByCardId(this.cardId)
+    },
+    allTagData() {
+      return this.$store.state.board.tags
+    }
+  },
   methods: {
-    addTag({newTag, newTagColor}) {
+    async addTag({newTag, newTagColor}) {
       if (this.tags.includes(newTag)) return;
 
       if (!(newTag in this.allTagData)) {
-        this.$store.dispatch("addTag", {
+        await this.$store.dispatch("addTag", {
           tag: newTag,
           tagData: {
             backgroundColor: newTagColor,
@@ -57,7 +63,7 @@ export default {
         });
       }
 
-      this.$store.dispatch("addCardTag", {
+      await this.$store.dispatch("addCardTag", {
         cardId: this.cardId,
         tag: newTag
       });

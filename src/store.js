@@ -1,160 +1,170 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import {vuexfireMutations, firestoreAction} from "vuexfire";
+import {db} from "./db";
+import firebase from 'firebase/app'
 
 Vue.use(Vuex);
+
+const testBoardRef = db.collection("boards").doc("WzwoDyMcFyVolflObXLK");
 
 export const store = new Vuex.Store({
     state: {
         board: {
-            title: "Test Board",
-            tags: {
-                "open": {
-                    backgroundColor: "bg-primary",
-                    color: "text-white"
-                },
-                "high priority": {
-                    backgroundColor: "bg-danger",
-                    color: "text-white"
-                },
-                "low priority": {
-                    backgroundColor: "bg-success",
-                    color: "text-white"
-                }
-            },
-            columns: [
-                {
-                    id: "0",
-                    title: "Test Column",
-                    cards: [
-                        {
-                            id: "1",
-                            title: "Test Card 1",
-                            content: "Some quick example text to build on the card title and make up the bulk of the card's content.",
-                            tags: ["open", "low priority"]
-                        },
-                        {
-                            id: "2",
-                            title: "Test Card 2",
-                            content: "Some quick example text to build on the card title and make up the bulk of the card's content.",
-                            tags: ["high priority"]
-                        }
-                    ]
-                }
-            ]
-        }
+            title: "",
+            tags: {}
+        },
+        columns: [],
+        cards: []
     },
     getters: {
         getColumnById: (state) => (id) => {
-            return state.board.columns.find(column => column.id === id);
+            return state.columns.find(column => column.id === id);
         },
-        allCards: state => {
-            return state.board.columns.map(column => column.cards).flat();
-        },
-        getCardById: (state, getters) => (id) => {
-            return getters.allCards.find(card => card.id === id);
+        getCardById: (state) => (id) => {
+            return state.cards.find(card => card.id === id);
         },
         getTagsByCardId: (state, getters) => (id) => {
             return getters.getCardById(id).tags;
+        },
+        getCardsByColumnId: (state, getters) => (id) => {
+            if (state.cards.length > 0) {
+                return getters.getColumnById(id).cards.map(c => getters.getCardById(c));
+            }
+        },
+        getMaxColumnIndex: (state) => () => {
+            if (state.columns.length > 0) {
+                return state.columns.map(column => column.index)
+                    .reduce((a, b) => Math.max(a, b));
+            }
         }
     },
     mutations: {
-        setBoardTitle(state, title) {
-            state.board.title = title;
-        },
-        addTag(state, {tag, tagData}) {
-            state.board.tags[tag] = tagData;
-        },
-        addColumn(state, column) {
-            state.board.columns.push(column);
-        },
-        removeColumn(state, index) {
-            state.board.columns.splice(index, 1);
-        },
-        setColumnTitle(state, {column, title}) {
-            column.title = title;
-        },
         updateCardsList(state, {column, cards}) {
-          column.cards = cards;
+            column.cards = cards;
         },
-        addCard(state, {column, card}) {
-            column.cards.push(card);
-        },
-        removeCard(state, {column, index}) {
-            column.cards.splice(index, 1);
-        },
-        setCardContent(state, {card, content}) {
-            card.content = content;
-        },
-        setCardTitle(state, {card, title}) {
-            card.title = title;
-        },
-        addCardTag(state, {card, tag}) {
-            card.tags.push(tag);
-        },
-        removeCardTag(state, {card, index}) {
-            card.tags.splice(index, 1);
-        }
+        ...vuexfireMutations
     },
     actions: {
-        setBoardTitle({commit}, title) {
-            commit("setBoardTitle", title);
+        setBoardTitle(context, title) {
+            testBoardRef.update({
+                title: title
+            })
+                .then(() => console.log("title updated!"));
         },
-        addTag({commit}, {tag, tagData}) {
-            commit("addTag", {tag, tagData});
+        async addTag(context, {tag, tagData}) {
+            testBoardRef.update({
+                [`tags.${tag}`]: tagData
+            }).then(() => console.log('tag added!'));
         },
-        addColumn({commit}) {
-            commit("addColumn", {
-                id: Math.random(), // TODO: get id from firebase first
-                title: "",
-                cards: []
-            });
+        addColumn({getters}) {
+            testBoardRef.collection("columns")
+                .add({
+                    title: "",
+                    index: getters.getMaxColumnIndex() + 1,
+                    cards: []
+                })
+                .then(() => console.log('column added!'));
         },
-        removeColumn({state, commit}, id) {
-            const index = state.board.columns.findIndex(c => c.id === id);
-            commit("removeColumn", index);
+        removeColumn(context, id) {
+            testBoardRef.collection("columns")
+                .doc(id)
+                .delete()
+                .then(() => console.log('column removed!'));
         },
-        setColumnTitle({commit, getters}, {id, title}) {
-            const column = getters.getColumnById(id);
-            commit("setColumnTitle", {column, title});
+        setColumnTitle(context, {id, title}) {
+            testBoardRef.collection("columns").doc(id)
+                .update({
+                    title: title
+                })
+                .then(() => {
+                    console.log('title updated!')
+                });
         },
         updateCardsList({commit, getters}, {columnId, cards}) {
             const column = getters.getColumnById(columnId);
             commit("updateCardsList", {column, cards});
+
+            testBoardRef.collection("columns").doc(columnId)
+                .update({
+                    cards: cards
+                }).then(() => console.log('cards list updated!'));
         },
-        addCard({commit, getters}, columnId) {
-            const column = getters.getColumnById(columnId);
-            commit("addCard", {
-                column,
-                card: {
-                    id: Math.random(), // TODO: get id from firebase first
-                    title: "",
-                    content: "",
-                    tags: []
-                }
+        addCard(context, columnId) {
+            testBoardRef.collection("cards").add({
+                title: "",
+                content: "",
+                tags: []
+            })
+                .then((doc) => {
+                    testBoardRef.collection("columns").doc(columnId)
+                        .update({
+                            cards: firebase.firestore.FieldValue.arrayUnion(doc.id)
+                        })
+                        .then(() => console.log('card added!'));
+                })
+        },
+        removeCard(context, {columnId, cardId}) {
+            testBoardRef.collection("columns").doc(columnId)
+                .update({
+                    cards: firebase.firestore.FieldValue.arrayRemove(cardId)
+                })
+                .then(() => {
+                    testBoardRef.collection("cards")
+                        .doc(cardId)
+                        .delete()
+                        .then(() => console.log('card removed!'));
+                })
+
+        },
+        setCardContent(context, {id, content}) {
+            testBoardRef.collection("cards").doc(id)
+                .update({
+                    content: content
+                })
+                .then(() => console.log('card content updated!'));
+        },
+        setCardTitle(context, {id, title}) {
+            testBoardRef.collection("cards").doc(id)
+                .update({
+                    title: title
+                })
+                .then(() => {
+                    console.log('card title updated!')
+                });
+        },
+        addCardTag(context, {cardId, tag}) {
+            testBoardRef.collection("cards").doc(cardId)
+                .update({
+                    tags: firebase.firestore.FieldValue.arrayUnion(tag)
+                }).then(() => {
+                console.log('card tags updated!')
             });
         },
-        removeCard({commit, getters}, {columnId, cardId}) {
-            const column = getters.getColumnById(columnId);
-            const index = column.cards.findIndex(c => c.id === cardId);
-
-            commit("removeCard", {column, index});
+        removeCardTag(context, {cardId, tag}) {
+            testBoardRef.collection("cards").doc(cardId)
+                .update({
+                    tags: firebase.firestore.FieldValue.arrayRemove(tag)
+                }).then(() => {
+                console.log('card tag removed!')
+            });
         },
-        setCardContent({commit, getters}, {id, content}) {
-            const card = getters.getCardById(id);
-            commit("setCardContent", {card, content});
-        },
-        setCardTitle({commit, getters}, {id, title}) {
-            const card = getters.getCardById(id);
-            commit("setCardTitle", {card, title});
-        },
-        addCardTag({commit, getters}, {cardId, tag}) {
-            const card = getters.getCardById(cardId);
-            commit("addCardTag", {card, tag});
-        },
-        removeCardTag({commit, getters}, {cardId, tag}) {
-            const card = getters.getCardById(cardId);
-            const index = card.tags.findIndex(t => t === tag);
-            commit("removeCardTag", {card, index});
+        bindBoard: firestoreAction(({bindFirestoreRef}) => {
+            return bindFirestoreRef("board", testBoardRef);
+        }),
+        bindColumns: firestoreAction(({bindFirestoreRef}) => {
+            return bindFirestoreRef("columns", testBoardRef.collection("columns").orderBy("index", "asc"));
+        }),
+        bindCards: firestoreAction(({bindFirestoreRef}) => {
+            return bindFirestoreRef("cards", testBoardRef.collection("cards"))
+        }),
+        init(context) {
+            Promise.all([context.dispatch("bindBoard"),
+                context.dispatch("bindColumns"),
+                context.dispatch("bindCards")])
+                .then(() => {
+                    console.log("all data retrieved!")
+                });
         }
     }
 });

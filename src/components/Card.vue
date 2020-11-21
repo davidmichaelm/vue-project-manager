@@ -6,7 +6,8 @@
             type="text"
             ref="title"
             placeholder="Card title"
-            v-model="title"
+            :value="title"
+            v-debounce="debounceTitle"
             @keypress="handleTitleKeypress">
       </b-card-title>
       <a class="ml-auto" href="#" @click="removeCard">x</a>
@@ -16,7 +17,8 @@
           placeholder="Enter some text..."
           ref="textarea"
           type="text"
-          v-model="content"
+          :value="content"
+          v-debounce="debounceContent"
           @input="cardDataChanged">
       </textarea>
     </b-card-text>
@@ -83,14 +85,19 @@ export default {
     },
     removeCard() {
       this.$store.dispatch("removeCard", {
-        columnId: this.columnId,
-        cardId: this.id
+        cardId: this.id,
+        columnId: this.columnId
       });
+    },
+    debounceContent(value) {
+      this.content = value;
+    },
+    debounceTitle(value) {
+      this.title = value;
     },
     ...mapActions([
         "setCardTitle",
-        "setCardContent",
-        "setCardTags"
+        "setCardContent"
     ])
   },
   mounted() {

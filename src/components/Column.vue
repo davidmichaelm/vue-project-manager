@@ -5,7 +5,8 @@
         <input
             type="text"
             placeholder="Column name"
-            v-model="title"
+            :value="title"
+            v-debounce="debounceTitle"
             @keypress="handleTitleKeypress" />
       </label>
 
@@ -23,14 +24,20 @@
       </a>
     </div>
 
-    <draggable v-model="cards" group="cards" :emptyInsertThreshold="100">
+    <div v-if="cards">
+      <draggable
+          v-model="cards"
+          group="cards"
+          :emptyInsertThreshold="100">
         <Card
             v-for="card in cards"
             :key="card.id"
             ref="card"
             :column-id="id"
             :card-data=card />
-    </draggable>
+      </draggable>
+    </div>
+
 
   </div>
 </template>
@@ -62,18 +69,18 @@ export default {
       },
       set(value) {
         this.setColumnTitle({
-          id: this.columnData.id,
+          id: this.id,
           title: value});
       }
     },
     cards: {
       get() {
-        return this.columnData.cards;
+        return this.$store.getters.getCardsByColumnId(this.id)
       },
       set(value) {
         this.$store.dispatch("updateCardsList", {
           columnId: this.id,
-          cards: value
+          cards: value.map(v => v.id)
         });
       }
     }
@@ -92,10 +99,13 @@ export default {
         );
       }
     },
+    debounceTitle(value) {
+      this.title = value;
+    },
     ...mapActions([
-        "removeColumn",
-        "setColumnTitle",
-        "addCard"
+      "removeColumn",
+      "setColumnTitle",
+      "addCard"
     ])
   }
 }

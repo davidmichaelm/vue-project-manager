@@ -9,6 +9,7 @@
 import Navbar from "@/components/Navbar";
 import Board from "@/components/Board";
 import {store} from "./store";
+// import {db} from "@/db";
 
 export default {
   name: 'App',
