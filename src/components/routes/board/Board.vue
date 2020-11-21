@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import Column from "@/components/Column";
+import Column from "@/components/routes/board/Column";
 import {mapActions} from "vuex";
 
 export default {
@@ -36,7 +36,7 @@ export default {
     },
     title: {
       get() {
-        return this.data.title;
+        return this.data ? this.data.title : null;
       },
       set(value) {
         this.setBoardTitle(value)

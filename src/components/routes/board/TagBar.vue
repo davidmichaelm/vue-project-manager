@@ -24,9 +24,9 @@
 </template>
 
 <script>
-import Tag from "@/components/Tag";
+import Tag from "@/components/routes/board/Tag";
 import { BIconPlus } from "bootstrap-vue";
-import AddTagPopover from "@/components/AddTagPopover";
+import AddTagPopover from "@/components/routes/board/AddTagPopover";
 
 export default {
   name: "TagBar",

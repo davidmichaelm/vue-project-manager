@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import TagBar from "@/components/TagBar";
+import TagBar from "@/components/routes/board/TagBar";
 import { mapActions } from "vuex";
 
 export default {
