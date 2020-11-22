@@ -6,7 +6,7 @@ import firebase from 'firebase/app'
 
 Vue.use(Vuex);
 
-const testBoardRef = db.collection("boards").doc("WzwoDyMcFyVolflObXLK");
+let boardRef;
 
 export const store = new Vuex.Store({
     state: {
@@ -15,7 +15,12 @@ export const store = new Vuex.Store({
             tags: {}
         },
         columns: [],
-        cards: []
+        cards: [],
+        user: {
+            loggedIn: false,
+            data: {},
+            boards: []
+        }
     },
     getters: {
         getColumnById: (state) => (id) => {
@@ -40,6 +45,15 @@ export const store = new Vuex.Store({
         }
     },
     mutations: {
+        setLoggedIn(state, value) {
+            state.user.loggedIn = value;
+        },
+        setUserData(state, data) {
+            state.user.data = data;
+        },
+        setUserBoards(state, boards) {
+            state.user.boards = boards;
+        },
         updateCardsList(state, {column, cards}) {
             column.cards = cards;
         },
@@ -47,18 +61,18 @@ export const store = new Vuex.Store({
     },
     actions: {
         setBoardTitle(context, title) {
-            testBoardRef.update({
+            boardRef.update({
                 title: title
             })
                 .then(() => console.log("title updated!"));
         },
         async addTag(context, {tag, tagData}) {
-            testBoardRef.update({
+            boardRef.update({
                 [`tags.${tag}`]: tagData
             }).then(() => console.log('tag added!'));
         },
         addColumn({getters}) {
-            testBoardRef.collection("columns")
+            boardRef.collection("columns")
                 .add({
                     title: "",
                     index: getters.getMaxColumnIndex() + 1,
@@ -67,13 +81,13 @@ export const store = new Vuex.Store({
                 .then(() => console.log('column added!'));
         },
         removeColumn(context, id) {
-            testBoardRef.collection("columns")
+            boardRef.collection("columns")
                 .doc(id)
                 .delete()
                 .then(() => console.log('column removed!'));
         },
         setColumnTitle(context, {id, title}) {
-            testBoardRef.collection("columns").doc(id)
+            boardRef.collection("columns").doc(id)
                 .update({
                     title: title
                 })
@@ -85,19 +99,19 @@ export const store = new Vuex.Store({
             const column = getters.getColumnById(columnId);
             commit("updateCardsList", {column, cards});
 
-            testBoardRef.collection("columns").doc(columnId)
+            boardRef.collection("columns").doc(columnId)
                 .update({
                     cards: cards
                 }).then(() => console.log('cards list updated!'));
         },
         addCard(context, columnId) {
-            testBoardRef.collection("cards").add({
+            boardRef.collection("cards").add({
                 title: "",
                 content: "",
                 tags: []
             })
                 .then((doc) => {
-                    testBoardRef.collection("columns").doc(columnId)
+                    boardRef.collection("columns").doc(columnId)
                         .update({
                             cards: firebase.firestore.FieldValue.arrayUnion(doc.id)
                         })
@@ -105,12 +119,12 @@ export const store = new Vuex.Store({
                 })
         },
         removeCard(context, {columnId, cardId}) {
-            testBoardRef.collection("columns").doc(columnId)
+            boardRef.collection("columns").doc(columnId)
                 .update({
                     cards: firebase.firestore.FieldValue.arrayRemove(cardId)
                 })
                 .then(() => {
-                    testBoardRef.collection("cards")
+                    boardRef.collection("cards")
                         .doc(cardId)
                         .delete()
                         .then(() => console.log('card removed!'));
@@ -118,14 +132,14 @@ export const store = new Vuex.Store({
 
         },
         setCardContent(context, {id, content}) {
-            testBoardRef.collection("cards").doc(id)
+            boardRef.collection("cards").doc(id)
                 .update({
                     content: content
                 })
                 .then(() => console.log('card content updated!'));
         },
         setCardTitle(context, {id, title}) {
-            testBoardRef.collection("cards").doc(id)
+            boardRef.collection("cards").doc(id)
                 .update({
                     title: title
                 })
@@ -134,7 +148,7 @@ export const store = new Vuex.Store({
                 });
         },
         addCardTag(context, {cardId, tag}) {
-            testBoardRef.collection("cards").doc(cardId)
+            boardRef.collection("cards").doc(cardId)
                 .update({
                     tags: firebase.firestore.FieldValue.arrayUnion(tag)
                 }).then(() => {
@@ -142,7 +156,7 @@ export const store = new Vuex.Store({
             });
         },
         removeCardTag(context, {cardId, tag}) {
-            testBoardRef.collection("cards").doc(cardId)
+            boardRef.collection("cards").doc(cardId)
                 .update({
                     tags: firebase.firestore.FieldValue.arrayRemove(tag)
                 }).then(() => {
@@ -150,20 +164,54 @@ export const store = new Vuex.Store({
             });
         },
         bindBoard: firestoreAction(({bindFirestoreRef}) => {
-            return bindFirestoreRef("board", testBoardRef);
+            return bindFirestoreRef("board", boardRef);
         }),
         bindColumns: firestoreAction(({bindFirestoreRef}) => {
-            return bindFirestoreRef("columns", testBoardRef.collection("columns").orderBy("index", "asc"));
+            return bindFirestoreRef("columns", boardRef.collection("columns").orderBy("index", "asc"));
         }),
         bindCards: firestoreAction(({bindFirestoreRef}) => {
-            return bindFirestoreRef("cards", testBoardRef.collection("cards"))
+            return bindFirestoreRef("cards", boardRef.collection("cards"))
         }),
-        init(context) {
+        initBoard(context, id) {
+            boardRef = db.collection("boards").doc(id);
+            
             Promise.all([context.dispatch("bindBoard"),
                 context.dispatch("bindColumns"),
                 context.dispatch("bindCards")])
                 .then(() => {
                     console.log("all data retrieved!")
+                });
+        },
+        unbindBoard: firestoreAction(({unbindFirestoreRef}) => {
+            unbindFirestoreRef("board");
+            unbindFirestoreRef("columns");
+            unbindFirestoreRef("cards");
+        }),
+        fetchUser({commit}, user) {
+            commit("setLoggedIn", user !== null);
+            if (user) {
+                commit("setUserData", {
+                    id: user.uid
+                    // displayName: user.displayName,
+                    // email: user.email
+                });
+            } else {
+                commit("setUserData", null);
+            }
+        },
+        getUserBoards({commit}, userId) {
+            db.collection("boards")
+                .where(`roles.${userId}`, "==", "owner")
+                .get()
+                .then((querySnapshot) => {
+                    let boards = [];
+                    querySnapshot.forEach(doc => {
+                        boards.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
+                    })
+                    commit("setUserBoards", boards);
                 });
         }
     }

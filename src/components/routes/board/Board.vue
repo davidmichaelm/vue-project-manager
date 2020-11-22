@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="row">
+    <div class="row" v-if="this.columns.length > 0">
       <input
           class="h1"
           type="text"
@@ -24,6 +24,7 @@ import {mapActions} from "vuex";
 
 export default {
   name: "Board",
+  props: ["id"],
   components: {
     Column
   },
@@ -44,18 +45,21 @@ export default {
     }
   },
   methods: {
-    addColumn() {
-      this.$store.dispatch("addColumn");
-    },
     debounceTitle(value) {
       this.title = value;
     },
     ...mapActions([
-      "setBoardTitle"
+      "setBoardTitle",
+      "addColumn",
+      "initBoard",
+      "unbindBoard"
     ])
   },
   mounted() {
-    this.$store.dispatch("init");
+    this.initBoard(this.id);
+  },
+  destroyed() {
+    this.unbindBoard();
   }
 }
 </script>

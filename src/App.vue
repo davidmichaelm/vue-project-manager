@@ -7,7 +7,6 @@
 
 <script>
 import Navbar from "@/components/routes/board/Navbar";
-// import Board from "@/components/Board";
 import {store} from "./store";
 import {router} from "./router";
 
@@ -18,7 +17,6 @@ export default {
   store,
   components: {
     Navbar
-    // Board
   }
 }
 </script>

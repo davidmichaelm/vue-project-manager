@@ -14,6 +14,7 @@
         <b-icon-three-dots/>
       </a>
       <b-popover
+          ref="popover"
           :target="'col-dots-' + id"
           triggers="focus"
           placement="bottom">
