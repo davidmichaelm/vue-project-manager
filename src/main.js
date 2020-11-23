@@ -9,10 +9,15 @@ import {store} from "./store";
 
 Vue.config.productionTip = false
 
-firebase.auth().onAuthStateChanged(user => {
-  store.dispatch("fetchUser", user);
-});
+let vueInstance;
 
-new Vue({
-  render: h => h(App),
-}).$mount("#app")
+firebase.auth().onAuthStateChanged(async (user) => {
+    store.dispatch("fetchUser", user)
+        .then(() => {
+            if (!vueInstance) {
+                vueInstance = new Vue({
+                    render: h => h(App),
+                }).$mount("#app")
+            }
+        });
+});
