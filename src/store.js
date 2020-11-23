@@ -174,7 +174,7 @@ export const store = new Vuex.Store({
         }),
         initBoard(context, id) {
             boardRef = db.collection("boards").doc(id);
-            
+
             Promise.all([context.dispatch("bindBoard"),
                 context.dispatch("bindColumns"),
                 context.dispatch("bindCards")])
@@ -213,6 +213,20 @@ export const store = new Vuex.Store({
                     })
                     commit("setUserBoards", boards);
                 });
+        },
+        bindUserBoards: firestoreAction(({bindFirestoreRef}, userId) => {
+            return bindFirestoreRef("user.boards",
+                db.collection("boards")
+                    .where(`roles.${userId}`, "==", "owner"));
+        }),
+        addBoard(context, {userId, title}) {
+            db.collection("boards").add({
+                title: title,
+                tags: {},
+                roles: {
+                    [userId]: "owner"
+                }
+            }).then(() => console.log("board added!"));
         }
     }
 });

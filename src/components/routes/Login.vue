@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <b-container>
     <h1>Login</h1>
     <div id="auth"></div>
-  </div>
+  </b-container>
 </template>
 
 <script>

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="row" v-if="this.columns.length > 0">
+    <div class="row">
       <input
           class="h1"
           type="text"
