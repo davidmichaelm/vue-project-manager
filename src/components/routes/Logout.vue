@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <h1>{{ message }}</h1>
-  </div>
+  <b-container class="text-center mt-5">
+    <h3>{{ message }}</h3>
+  </b-container>
 </template>
 
 <script>
@@ -11,22 +11,25 @@ export default {
   name: "Logout",
   data() {
     return {
-      message: "You have been logged out"
+      message: ""
     }
   },
   mounted() {
     if (this.$store.state.user.loggedIn) {
       firebase.auth().signOut()
           .then(() => {
-            this.message = "You have been logged out";
+            this.message = "You have been logged out. Redirecting...";
           })
           .catch(() => {
-            this.message = "Error: You have not been logged out";
+            this.message = "Error: You have not been logged out. Redirecting...";
           });
     } else {
       this.message = "Something went wrong. Redirecting..."
-      this.$router.push("/");
     }
+
+    setTimeout(() => {
+      this.$router.push("/");
+    }, 3000)
   }
 }
 </script>
