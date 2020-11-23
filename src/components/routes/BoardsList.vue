@@ -1,12 +1,12 @@
 <template>
-  <b-container>
-    <div class="d-flex align-items-center">
-      <h1>My Boards</h1>
-      <div class="ml-auto">
+  <b-container class="col-12 col-sm-9 col-md-7 col-lg-6">
+    <div class="d-flex flex-wrap align-items-center">
+      <h1 class="mr-auto col-12 col-sm-6 p-0">My Boards</h1>
+      <div class="col-12 col-sm-auto p-0">
         <a href="#" class="btn btn-primary" @click="$bvModal.show('add-board-modal')">+ Add a new board</a>
       </div>
     </div>
-    <b-list-group>
+    <b-list-group class="mt-3">
       <b-list-group-item class="d-flex align-items-center" v-for="board in boards" :key="board.id">
         <router-link :to="`/board/${board.id}`">
           {{ board.title }}
