@@ -7,10 +7,21 @@
       </div>
     </div>
     <b-list-group>
-      <b-list-group-item v-for="board in boards" :key="board.id">
+      <b-list-group-item class="d-flex align-items-center" v-for="board in boards" :key="board.id">
         <router-link :to="`/board/${board.id}`">
           {{ board.title }}
         </router-link>
+
+        <a href="#" class="ml-auto mb-auto h4" :id="'dots-' + board.id" tabindex="0">
+          <b-icon-three-dots/>
+        </a>
+        <b-popover
+            ref="popover"
+            :target="'dots-' + board.id"
+            triggers="focus"
+            placement="bottom">
+          <button class="btn btn-danger" @click="deleteBoard(board.id)">Delete</button>
+        </b-popover>
       </b-list-group-item>
     </b-list-group>
 
@@ -33,7 +44,7 @@
               type="text"
               :state="nameState"
               v-model="newBoardName"
-              required />
+              required/>
         </b-form-group>
       </form>
     </b-modal>
@@ -43,9 +54,13 @@
 <script>
 import {mapState} from "vuex";
 import {mapActions} from "vuex";
+import {BIconThreeDots} from "bootstrap-vue";
 
 export default {
   name: "BoardsList",
+  components: {
+    BIconThreeDots
+  },
   data() {
     return {
       nameState: null,
@@ -90,7 +105,8 @@ export default {
     },
     ...mapActions([
       "bindUserBoards",
-      "addBoard"
+      "addBoard",
+      "deleteBoard"
     ])
   },
   mounted() {

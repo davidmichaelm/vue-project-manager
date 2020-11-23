@@ -227,6 +227,12 @@ export const store = new Vuex.Store({
                     [userId]: "owner"
                 }
             }).then(() => console.log("board added!"));
+        },
+        deleteBoard(context, boardId) {
+            db.collection("boards")
+                .doc(boardId)
+                .delete()
+                .then(() => console.log("board deleted!"))
         }
     }
 });
