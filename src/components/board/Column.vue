@@ -10,22 +10,25 @@
             @keypress="handleTitleKeypress" />
       </label>
 
-      <a href="#" class="h4" :id="'col-dots-' + id" tabindex="0">
-        <b-icon-three-dots/>
-      </a>
-      <b-popover
-          ref="popover"
-          :target="'col-dots-' + id"
-          triggers="focus"
-          placement="bottom">
-        <button class="btn btn-danger" @click="removeColumn(id)">Delete</button>
-      </b-popover>
-      <a href="#" class="h4" @click="addCard(id)">
-        <b-icon-plus/>
-      </a>
+      <template v-if="ready">
+        <a href="#" class="h4" :id="'col-dots-' + id" tabindex="0">
+          <b-icon-three-dots/>
+        </a>
+        <b-popover
+            ref="popover"
+            :target="'col-dots-' + id"
+            triggers="focus"
+            placement="bottom">
+          <button class="btn btn-danger" @click="removeColumn(id)">Delete</button>
+        </b-popover>
+        <a href="#" class="h4" @click="addCard(id)">
+          <b-icon-plus/>
+        </a>
+      </template>
+
     </div>
 
-    <div v-if="cards">
+    <template v-if="cards">
       <draggable
           v-model="cards"
           group="cards"
@@ -37,7 +40,7 @@
             :column-id="id"
             :card-data=card />
       </draggable>
-    </div>
+    </template>
 
 
   </div>
@@ -61,7 +64,8 @@ export default {
   data() {
     return {
       id: this.columnData.id,
-      cardAdded: false
+      cardAdded: false,
+      ready: false
     }
   },
   computed: {
@@ -127,6 +131,9 @@ export default {
         });
       }
     }
+  },
+  mounted() {
+    this.ready = true;
   }
 }
 </script>

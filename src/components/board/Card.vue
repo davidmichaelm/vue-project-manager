@@ -10,7 +10,9 @@
             v-debounce="debounceTitle"
             @keypress="handleTitleKeypress">
       </b-card-title>
-      <a class="ml-auto" href="#" @click="removeCard">x</a>
+      <a class="ml-auto" href="#" @click="removeCard">
+        <b-icon-x class="h4 m-auto"/>
+      </a>
     </div>
     <b-card-text>
       <textarea
@@ -30,12 +32,14 @@
 <script>
 import TagBar from "@/components/board/TagBar";
 import { mapActions } from "vuex";
+import { BIconX } from "bootstrap-vue";
 
 export default {
   name: "Card",
   props: ["cardData", "columnId"],
   components: {
-    TagBar
+    TagBar,
+    BIconX
   },
   data() {
     return {

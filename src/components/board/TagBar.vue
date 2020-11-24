@@ -1,5 +1,6 @@
 <template>
   <div>
+    <template v-if="ready">
     <div v-if="tags.length !== 0" class="d-flex flex-wrap flex-row align-items-center">
       <Tag
           v-for="tag in tags"
@@ -7,19 +8,21 @@
           :tagData="allTagData[tag]"
           :key="tag"
           @removeTag="removeTag(tag)"/>
-      <a href="#" :id="'add-tag-' + id">
-        <b-icon-plus class="h4 mb-0 text-primary"/>
-      </a>
-      <AddTagPopover @addTag="addTag" :target="'add-tag-' + id" :all-tag-data="allTagData" />
+
+        <a href="#" :id="'add-tag-' + cardId">
+          <b-icon-plus class="h4 mb-0 text-primary"/>
+        </a>
+        <AddTagPopover @addTag="addTag" :target="'add-tag-' + cardId" :all-tag-data="allTagData" />
+
     </div>
     <div v-else>
-      <a href="#" :id="'add-tag-' + id" class="text-primary d-flex align-items-center">
+      <a href="#" :id="'add-tag-' + cardId" class="text-primary d-flex align-items-center">
         <b-icon-plus class="h4 mb-0"/>
         Add a tag
       </a>
-      <AddTagPopover @addTag="addTag" :target="'add-tag-' + id" :all-tag-data="allTagData" />
+      <AddTagPopover @addTag="addTag" :target="'add-tag-' + cardId" :all-tag-data="allTagData" />
     </div>
-
+    </template>
   </div>
 </template>
 
@@ -38,7 +41,7 @@ export default {
   },
   data() {
     return {
-      id: Math.random()
+      ready: false
     }
   },
   computed: {
@@ -74,6 +77,9 @@ export default {
         tag: tag
       });
     }
+  },
+  mounted() {
+    this.ready = true;
   }
 }
 </script>
