@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import Column from "@/components/routes/board/Column";
+import Column from "@/components/board/Column";
 import {mapActions} from "vuex";
 
 export default {

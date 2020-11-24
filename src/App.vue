@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import Navbar from "@/components/routes/board/Navbar";
+import Navbar from "@/components/Navbar";
 import {store} from "./store";
 import {router} from "./router";
 

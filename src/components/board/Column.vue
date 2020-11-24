@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import Card from "@/components/routes/board/Card";
+import Card from "@/components/board/Card";
 import {BIconThreeDots, BIconPlus} from 'bootstrap-vue';
 import draggable from "vuedraggable";
 import { mapActions } from 'vuex'

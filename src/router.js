@@ -1,12 +1,12 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import LandingPage from "@/components/routes/LandingPage";
-import Login from "@/components/routes/Login";
-import Board from "@/components/routes/board/Board";
-import PageNotFound from "@/components/routes/PageNotFound";
-import BoardsList from "@/components/routes/BoardsList";
-import Logout from "@/components/routes/Logout";
-import Burndown from "@/components/routes/Burndown";
+import LandingPage from "@/routes/LandingPage";
+import Login from "@/routes/Login";
+import Board from "@/routes/Board";
+import PageNotFound from "@/routes/PageNotFound";
+import BoardsList from "@/routes/BoardsList";
+import Logout from "@/routes/Logout";
+import Burndown from "@/routes/Burndown";
 
 
 Vue.use(VueRouter);
