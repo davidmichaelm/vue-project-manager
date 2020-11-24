@@ -37,7 +37,7 @@ export default {
     },
     title: {
       get() {
-        return this.data ? this.data.title : null;
+        return this.data?.title;
       },
       set(value) {
         this.setBoardTitle(value)
@@ -58,8 +58,11 @@ export default {
   mounted() {
     this.initBoard(this.id);
   },
-  destroyed() {
-    this.unbindBoard();
+  beforeRouteLeave(to, from, next) {
+    if (to.params.id !== this.id) {
+      this.unbindBoard();
+    }
+    next();
   }
 }
 </script>

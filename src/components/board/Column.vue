@@ -137,10 +137,6 @@ export default {
   float: none;
 }
 
-.empty-column {
-  height: 144px;
-}
-
 input {
   border: none;
   width: 100%;
