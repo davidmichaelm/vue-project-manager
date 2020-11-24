@@ -14,7 +14,7 @@
 
         <router-link :to="`/board/${board.id}/burndown`"
                      class="ml-auto mb-auto h5 pr-2">
-          <b-icon-bar-chart-line-fill flip-h=true />
+          <b-icon-bar-chart-line-fill flip-h />
         </router-link>
 
         <a href="#" class="mb-auto h4" :id="'dots-' + board.id" tabindex="0">
@@ -114,6 +114,7 @@ export default {
     },
     ...mapActions([
       "bindUserBoards",
+      "unbindUserBoards",
       "addBoard",
       "deleteBoard"
     ])
@@ -124,6 +125,9 @@ export default {
     } else {
       console.log("not logged in");
     }
+  },
+  destroyed() {
+    this.unbindUserBoards();
   }
 
 }

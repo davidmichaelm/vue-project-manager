@@ -221,6 +221,9 @@ export const store = new Vuex.Store({
                 db.collection("boards")
                     .where(`roles.${userId}`, "==", "owner"));
         }),
+        unbindUserBoards: firestoreAction(({unbindFirestoreRef}) => {
+            unbindFirestoreRef("user.boards");
+        }),
         addBoard(context, {userId, title}) {
             db.collection("boards").add({
                 title: title,
