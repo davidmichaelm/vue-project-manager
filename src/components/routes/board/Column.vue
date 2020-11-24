@@ -60,7 +60,8 @@ export default {
   props: ["columnData"],
   data() {
     return {
-      id: this.columnData.id
+      id: this.columnData.id,
+      cardAdded: false
     }
   },
   computed: {
@@ -76,7 +77,7 @@ export default {
     },
     cards: {
       get() {
-        return this.$store.getters.getCardsByColumnId(this.id)
+        return this.$store.getters.getCardsByColumnId(this.id) ?? [];
       },
       set(value) {
         this.$store.dispatch("updateCardsList", {
@@ -91,23 +92,41 @@ export default {
       if (event.key === "Enter") {
         // Add a card if there aren't any
         if (this.cards.length === 0) {
-          this.addCard(this.id);
-        }
+          this.addCard(this.id)
 
-        // Then focus the first card
-        this.$nextTick(() =>
-            this.$refs.card[0].focusTitle()
-        );
+          // Set a flag to show we have just added a card
+          this.cardAdded = true;
+        }
       }
     },
     debounceTitle(value) {
       this.title = value;
     },
+    addCard(columnId) {
+      this.cardAdded = true;
+      this.$store.dispatch("addCard", columnId);
+    },
     ...mapActions([
       "removeColumn",
-      "setColumnTitle",
-      "addCard"
+      "setColumnTitle"
     ])
+  },
+  watch: {
+    // Watch the cards list and focus a card if it was just created
+    cards(newValue, oldValue) {
+      if (this.cardAdded) {
+        // Exit early if we don't know about any cards in refs
+        if (!("card" in this.$refs)) return;
+
+        this.$nextTick(() => {
+          // Make sure there is a card ref and that we're adding 1 card
+          if (this.$refs.card.length > 0 && newValue.length === oldValue.length + 1) {
+            this.cardAdded = false;
+            this.$refs.card[newValue.length - 1].focusTitle();
+          }
+        });
+      }
+    }
   }
 }
 </script>

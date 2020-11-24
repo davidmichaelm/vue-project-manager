@@ -41,6 +41,8 @@ export const store = new Vuex.Store({
             if (state.columns.length > 0) {
                 return state.columns.map(column => column.index)
                     .reduce((a, b) => Math.max(a, b));
+            } else {
+                return 0;
             }
         }
     },
