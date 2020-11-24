@@ -1,25 +1,25 @@
 <template>
-  <b-navbar>
-    <b-navbar-brand>
-      <router-link to="/">Project Manager</router-link>
+  <b-navbar type="dark" variant="dark" class="mb-4">
+    <b-navbar-brand to="/">
+      Project Manager
     </b-navbar-brand>
     <b-navbar-nav class="ml-auto">
       <template v-if="boardId">
-        <b-nav-item>
-          <router-link :to="`/board/${boardId}/burndown`">Burndown</router-link>
+        <b-nav-item :to="`/board/${boardId}/burndown`">
+          Burndown
         </b-nav-item>
       </template>
       <template v-if="loggedIn">
-        <b-nav-item>
-          <router-link to="/myboards">My Boards</router-link>
+        <b-nav-item to="/myboards">
+          My Boards
         </b-nav-item>
-        <b-nav-item>
-          <router-link to="/logout">Logout</router-link>
+        <b-nav-item to="/logout">
+          Logout
         </b-nav-item>
       </template>
       <template v-else>
-        <b-nav-item>
-          <router-link to="/login">Login</router-link>
+        <b-nav-item to="/login">
+          Login
         </b-nav-item>
       </template>
 
@@ -43,7 +43,6 @@ export default {
 
 <style scoped>
 a {
-  color: initial;
   text-decoration: none;
 }
 </style>
