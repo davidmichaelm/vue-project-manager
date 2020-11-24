@@ -23,6 +23,9 @@
           <button class="btn btn-danger" @click="deleteBoard(board.id)">Delete</button>
         </b-popover>
       </b-list-group-item>
+      <b-list-group-item v-if="boards.length === 0">
+        You haven't created any boards yet!
+      </b-list-group-item>
     </b-list-group>
 
 
