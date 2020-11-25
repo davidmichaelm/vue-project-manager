@@ -29,7 +29,7 @@
         </b-popover>
       </b-list-group-item>
       <b-list-group-item v-if="boards.length === 0">
-        You haven't created any boards yet!
+        Nothing to see here... yet!
       </b-list-group-item>
     </b-list-group>
 
