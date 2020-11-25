@@ -7,6 +7,7 @@ import PageNotFound from "@/routes/PageNotFound";
 import BoardsList from "@/routes/BoardsList";
 import Logout from "@/routes/Logout";
 import Burndown from "@/routes/Burndown";
+import BoardSettings from "@/routes/BoardSettings";
 
 
 Vue.use(VueRouter);
@@ -17,6 +18,7 @@ const routes = [
     { path: "/logout", component: Logout },
     { path: "/board/:id", component: Board, props: true },
     { path: "/board/:id/burndown", component: Burndown, props: true },
+    { path: "/board/:id/board-settings", component: BoardSettings, props: true },
     { path: "/myboards", component: BoardsList },
     { path: "*", component: PageNotFound }
 ];

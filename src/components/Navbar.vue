@@ -5,6 +5,9 @@
     </b-navbar-brand>
     <b-navbar-nav class="ml-auto">
       <template v-if="boardId">
+        <b-nav-item :to="`/board/${boardId}/board-settings`">
+          Board Settings
+        </b-nav-item>
         <b-nav-item :to="`/board/${boardId}/burndown`">
           Burndown
         </b-nav-item>
