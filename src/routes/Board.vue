@@ -21,17 +21,15 @@
 <script>
 import Column from "@/components/board/Column";
 import {mapActions} from "vuex";
+import {boardBehavior} from "@/components/mixins/board-behavior";
 
 export default {
   name: "Board",
-  props: ["id"],
+  mixins: [boardBehavior],
   components: {
     Column
   },
   computed: {
-    data() {
-      return this.$store.state.board;
-    },
     columns() {
       return this.$store.state.columns
     },
@@ -54,15 +52,6 @@ export default {
       "initBoard",
       "unbindBoard"
     ])
-  },
-  mounted() {
-    this.initBoard(this.id);
-  },
-  beforeRouteLeave(to, from, next) {
-    if (to.params.id !== this.id) {
-      this.unbindBoard();
-    }
-    next();
   }
 }
 </script>

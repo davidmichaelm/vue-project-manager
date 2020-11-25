@@ -14,40 +14,15 @@
 </template>
 
 <script>
-import {mapActions} from "vuex";
 import {BIconArrowReturnLeft} from "bootstrap-vue";
+import {boardBehavior} from "@/components/mixins/board-behavior";
 
 export default {
   name: "Burndown",
   components: {
     BIconArrowReturnLeft
   },
-  props: ["id"],
-  computed: {
-    boardId() {
-      return this.$store.state.board?.id
-    },
-    data() {
-      return this.$store.state.board;
-    }
-  },
-  methods: {
-    ...mapActions([
-        "initBoard",
-        "unbindBoard"
-    ])
-  },
-  mounted() {
-    if (this.id !== this.boardId) {
-      this.initBoard(this.id);
-    }
-  },
-  beforeRouteLeave(to, from, next) {
-    if (to.params.id !== this.id) {
-      this.unbindBoard();
-    }
-    next();
-  }
+  mixins: [boardBehavior]
 }
 </script>
 
