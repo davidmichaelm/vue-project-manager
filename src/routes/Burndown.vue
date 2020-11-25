@@ -1,26 +1,20 @@
 <template>
   <b-container>
-    <div class="position-relative">
-
-      <h1>
-        {{ data.title }}
-        <router-link :to="`/board/${id}`">
-        <b-icon-arrow-return-left class="h2 m-auto" />
-      </router-link></h1>
-    </div>
-
-    <h3>Burndown Chart</h3>
+    <BoardPageHeader
+        :board-id="boardId"
+        :board-title="data.title"
+        page-title="Burndown Chart" />
   </b-container>
 </template>
 
 <script>
-import {BIconArrowReturnLeft} from "bootstrap-vue";
 import {boardBehavior} from "@/components/mixins/board-behavior";
+import BoardPageHeader from "@/components/board/BoardPageHeader";
 
 export default {
   name: "Burndown",
   components: {
-    BIconArrowReturnLeft
+    BoardPageHeader
   },
   mixins: [boardBehavior]
 }
