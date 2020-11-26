@@ -8,6 +8,9 @@ export const boardBehavior = {
         },
         data() {
             return this.$store.state.board;
+        },
+        loggedIn() {
+            return this.$store.state.user.loggedIn;
         }
     },
     methods: {
@@ -17,6 +20,11 @@ export const boardBehavior = {
         ])
     },
     mounted() {
+        if (!this.loggedIn) {
+            this.$router.push("/");
+            return;
+        }
+
         if (this.id !== this.boardId) {
             this.initBoard(this.id);
         }
