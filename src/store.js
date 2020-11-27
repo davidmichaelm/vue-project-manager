@@ -12,7 +12,8 @@ export const store = new Vuex.Store({
     state: {
         board: {
             title: "",
-            tags: {}
+            tags: {},
+            roles: {}
         },
         columns: [],
         cards: [],
@@ -20,7 +21,8 @@ export const store = new Vuex.Store({
             loggedIn: false,
             data: {},
             boards: []
-        }
+        },
+        users: []
     },
     getters: {
         getColumnById: (state) => (id) => {
@@ -44,6 +46,15 @@ export const store = new Vuex.Store({
             } else {
                 return 0;
             }
+        },
+        getBoardUsers: (state) => () => {
+            console.log("hello")
+            if (state.board?.roles) {
+                console.log(Object.keys(state.board.roles))
+                return Object.keys(state.board.roles);
+            }
+
+            return null;
         }
     },
     mutations: {
@@ -175,14 +186,18 @@ export const store = new Vuex.Store({
             return bindFirestoreRef("cards", boardRef.collection("cards"))
         }),
         initBoard(context, id) {
-            boardRef = db.collection("boards").doc(id);
+            return new Promise((resolve, reject) => {
+                boardRef = db.collection("boards").doc(id);
 
-            Promise.all([context.dispatch("bindBoard"),
-                context.dispatch("bindColumns"),
-                context.dispatch("bindCards")])
-                .then(() => {
-                    console.log("all data retrieved!")
-                });
+                Promise.all([context.dispatch("bindBoard"),
+                    context.dispatch("bindColumns"),
+                    context.dispatch("bindCards")])
+                    .then(() => {
+                        console.log("all data retrieved!")
+                        resolve();
+                    })
+                    .catch(() => reject());
+            })
         },
         unbindBoard: firestoreAction(({unbindFirestoreRef}) => {
             unbindFirestoreRef("board");
@@ -193,8 +208,8 @@ export const store = new Vuex.Store({
             commit("setLoggedIn", user !== null);
             if (user) {
                 commit("setUserData", {
-                    id: user.uid
-                    // displayName: user.displayName,
+                    id: user.uid,
+                    displayName: user.displayName,
                     // email: user.email
                 });
             } else {
@@ -238,6 +253,19 @@ export const store = new Vuex.Store({
                 .doc(boardId)
                 .delete()
                 .then(() => console.log("board deleted!"))
-        }
+        },
+        addNewUser(context, user) {
+            db.collection("users")
+                .doc(user.uid)
+                .update({
+                    displayName: user.displayName,
+                    email: user.email
+                })
+        },
+        bindUsers: firestoreAction(({bindFirestoreRef}, users) => {
+            return bindFirestoreRef("users",
+                db.collection("users")
+                    .where(firebase.firestore.FieldPath.documentId(), "in", users));
+        })
     }
 });

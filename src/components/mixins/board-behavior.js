@@ -26,7 +26,10 @@ export const boardBehavior = {
         }
 
         if (this.id !== this.boardId) {
-            this.initBoard(this.id);
+            this.initBoard(this.id)
+                .then(() => {
+                    this.$emit("boardLoaded");
+                });
         }
     },
     beforeRouteLeave(to, from, next) {
