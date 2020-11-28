@@ -120,11 +120,12 @@ export default {
     ])
   },
   mounted() {
-    if (this.loggedIn) {
-      this.bindUserBoards(this.userId);
-    } else {
-      console.log("not logged in");
+    if (!this.loggedIn) {
+      this.$router.push("/");
+      return;
     }
+
+    this.bindUserBoards(this.userId);
   },
   destroyed() {
     this.unbindUserBoards();
