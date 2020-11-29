@@ -61,8 +61,9 @@ export const store = new Vuex.Store({
             return state.users.filter(u => u.id === ownerId)[0];
         },
         getBoardUsersNoOwner: (state, getters) => () => {
-            return getters.getBoardUsers()
+            const ids = getters.getBoardUsers()
                 .filter(u => u !== getters.getBoardOwner()?.id);
+            return state.users.filter(u => ids.includes(u.id));
         }
     },
     mutations: {
@@ -207,8 +208,8 @@ export const store = new Vuex.Store({
                         console.log("all data retrieved!")
                         resolve();
                     })
-                    .catch(() => reject());
-            })
+                    .catch((e) => reject(e));
+            });
         },
         unbindBoard: firestoreAction(({unbindFirestoreRef}) => {
             unbindFirestoreRef("board");
@@ -277,27 +278,35 @@ export const store = new Vuex.Store({
                 .catch((e) => console.log(e))
         },
         fetchUsers({commit, getters}) {
-          db.collection("users")
-              .where(firebase.firestore.FieldPath.documentId(), "in", getters.getBoardUsers())
-              .get()
-              .then(querySnapshot => {
-                  let users = [];
-                  querySnapshot.forEach(doc => {
-                      let user = doc.data();
-                      user.id = doc.id;
-                      users.push(user);
-                  })
-                  commit("setUsers", users);
-              });
+            return new Promise((resolve, reject) => {
+                db.collection("users")
+                    .where(firebase.firestore.FieldPath.documentId(), "in", getters.getBoardUsers())
+                    .get()
+                    .then(querySnapshot => {
+                        let users = [];
+                        querySnapshot.forEach(doc => {
+                            let user = doc.data();
+                            user.id = doc.id;
+                            users.push(user);
+                        })
+                        commit("setUsers", users);
+                        resolve();
+                    })
+                    .catch((e) => reject(e));
+            });
         },
         addUserToBoard({dispatch}, userId) {
-            boardRef
-                .update({
-                    ["roles." + userId]: "editor"
-                })
-                .then(() => {
-                    dispatch("fetchUsers");
-                });
+            return new Promise((resolve, reject) => {
+                boardRef
+                    .update({
+                        ["roles." + userId]: "editor"
+                    })
+                    .then(() => {
+                        dispatch("fetchUsers")
+                            .then(() => resolve());
+                    })
+                    .catch((e) => reject(e));
+            });
         },
         removeUserFromBoard({dispatch}, userId) {
             boardRef

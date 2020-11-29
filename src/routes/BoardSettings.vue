@@ -92,8 +92,10 @@ export default {
       }
     },
     handleUserInvite(userId) {
-      this.addUserToBoard(userId);
-      this.userSearch = "";
+      this.addUserToBoard(userId)
+        .then(() => {
+          this.searchUsers(this.userSearchString);
+        });
     },
     debounceUserSearchString(value) {
       this.userSearchString = value;
