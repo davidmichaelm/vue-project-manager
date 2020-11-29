@@ -22,7 +22,8 @@ export const store = new Vuex.Store({
             data: {},
             boards: []
         },
-        users: []
+        users: [],
+        userSearch: []
     },
     getters: {
         getColumnById: (state) => (id) => {
@@ -48,13 +49,20 @@ export const store = new Vuex.Store({
             }
         },
         getBoardUsers: (state) => () => {
-            console.log("hello")
             if (state.board?.roles) {
-                console.log(Object.keys(state.board.roles))
                 return Object.keys(state.board.roles);
             }
 
             return null;
+        },
+        getBoardOwner: (state) => () => {
+            const roles = state.board.roles;
+            const ownerId = Object.keys(roles).find(r => roles[r] === "owner");
+            return state.users.filter(u => u.id === ownerId)[0];
+        },
+        getBoardUsersNoOwner: (state, getters) => () => {
+            return getters.getBoardUsers()
+                .filter(u => u !== getters.getBoardOwner()?.id);
         }
     },
     mutations: {
@@ -69,6 +77,9 @@ export const store = new Vuex.Store({
         },
         updateCardsList(state, {column, cards}) {
             column.cards = cards;
+        },
+        setUsers(state, users) {
+            state.users = users;
         },
         ...vuexfireMutations
     },
@@ -255,17 +266,47 @@ export const store = new Vuex.Store({
                 .then(() => console.log("board deleted!"))
         },
         addNewUser(context, user) {
+            console.log(user)
             db.collection("users")
                 .doc(user.uid)
-                .update({
+                .set({
                     displayName: user.displayName,
                     email: user.email
                 })
+                .then(() => console.log("new user added!"))
+                .catch((e) => console.log(e))
         },
-        bindUsers: firestoreAction(({bindFirestoreRef}, users) => {
-            return bindFirestoreRef("users",
-                db.collection("users")
-                    .where(firebase.firestore.FieldPath.documentId(), "in", users));
-        })
+        fetchUsers({commit, getters}) {
+          db.collection("users")
+              .where(firebase.firestore.FieldPath.documentId(), "in", getters.getBoardUsers())
+              .get()
+              .then(querySnapshot => {
+                  let users = [];
+                  querySnapshot.forEach(doc => {
+                      let user = doc.data();
+                      user.id = doc.id;
+                      users.push(user);
+                  })
+                  commit("setUsers", users);
+              });
+        },
+        addUserToBoard({dispatch}, userId) {
+            boardRef
+                .update({
+                    ["roles." + userId]: "editor"
+                })
+                .then(() => {
+                    dispatch("fetchUsers");
+                });
+        },
+        removeUserFromBoard({dispatch}, userId) {
+            boardRef
+                .update({
+                    ["roles." + userId]: firebase.firestore.FieldValue.delete()
+                })
+                .then(() => {
+                    dispatch("fetchUsers");
+                });
+        }
     }
 });

@@ -2,6 +2,11 @@ import {mapActions} from "vuex";
 
 export const boardBehavior = {
     props: ["id"],
+    data() {
+        return {
+            boardLoaded: false
+        }
+    },
     computed: {
         boardId() {
             return this.$store.state.board?.id
@@ -28,8 +33,12 @@ export const boardBehavior = {
         if (this.id !== this.boardId) {
             this.initBoard(this.id)
                 .then(() => {
+                    this.boardLoaded = true;
                     this.$emit("boardLoaded");
                 });
+        } else if (this.id === this.boardId) {
+            this.boardLoaded = true;
+            this.$emit("boardLoaded");
         }
     },
     beforeRouteLeave(to, from, next) {
