@@ -14,7 +14,7 @@ export default {
       message: ""
     }
   },
-  mounted() {
+  created() {
     if (this.$store.state.user.loggedIn) {
       firebase.auth().signOut()
           .then(() => {

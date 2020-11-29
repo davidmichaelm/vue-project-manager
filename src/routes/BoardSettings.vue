@@ -129,7 +129,7 @@ export default {
       "removeUserFromBoard"
     ])
   },
-  mounted() {
+  created() {
     if (this.boardLoaded) {
       this.init();
     } else {

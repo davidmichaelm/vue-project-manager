@@ -24,7 +24,7 @@ export const boardBehavior = {
             "unbindBoard"
         ])
     },
-    mounted() {
+    created() {
         if (!this.loggedIn) {
             this.$router.push("/");
             return;

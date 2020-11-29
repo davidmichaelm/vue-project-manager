@@ -117,7 +117,7 @@ export default {
       "deleteBoard"
     ])
   },
-  mounted() {
+  created() {
     if (!this.loggedIn) {
       this.$router.push("/");
       return;
