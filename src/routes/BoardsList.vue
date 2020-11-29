@@ -12,9 +12,16 @@
           {{ board.title }}
         </router-link>
 
+
+
         <router-link :to="`/board/${board.id}/burndown`"
                      class="ml-auto mb-auto h5 pr-2">
           <b-icon-bar-chart-line-fill flip-h />
+        </router-link>
+
+        <router-link :to="`/board/${board.id}/board-settings`"
+                     class="mb-auto h5 pr-2">
+          <b-icon-gear-fill />
         </router-link>
 
         <a href="#" class="mb-auto h4" :id="'dots-' + board.id" tabindex="0">
@@ -62,13 +69,14 @@
 <script>
 import {mapState} from "vuex";
 import {mapActions} from "vuex";
-import {BIconThreeDots, BIconBarChartLineFill} from "bootstrap-vue";
+import {BIconThreeDots, BIconBarChartLineFill, BIconGearFill} from "bootstrap-vue";
 
 export default {
   name: "BoardsList",
   components: {
     BIconThreeDots,
-    BIconBarChartLineFill
+    BIconBarChartLineFill,
+    BIconGearFill
   },
   data() {
     return {
