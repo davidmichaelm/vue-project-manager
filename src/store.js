@@ -64,6 +64,15 @@ export const store = new Vuex.Store({
             const ids = getters.getBoardUsers()
                 .filter(u => u !== getters.getBoardOwner()?.id);
             return state.users.filter(u => ids.includes(u.id));
+        },
+        getUserId: (state) => () => {
+            return state.user.data.id;
+        },
+        getUserOwnedBoards: (state, getters) => () => {
+            return state.user.boards.filter(b => b.roles[getters.getUserId()] === "owner");
+        },
+        getUserEditorBoards: (state, getters) => () => {
+            return state.user.boards.filter(b => b.roles[getters.getUserId()] === "editor");
         }
     },
     mutations: {
@@ -246,7 +255,7 @@ export const store = new Vuex.Store({
         bindUserBoards: firestoreAction(({bindFirestoreRef}, userId) => {
             return bindFirestoreRef("user.boards",
                 db.collection("boards")
-                    .where(`roles.${userId}`, "==", "owner"));
+                    .where(`roles.${userId}`, "in", ["owner", "editor"]));
         }),
         unbindUserBoards: firestoreAction(({unbindFirestoreRef}) => {
             unbindFirestoreRef("user.boards");

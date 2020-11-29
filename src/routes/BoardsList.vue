@@ -7,37 +7,24 @@
       </div>
     </div>
     <b-list-group class="mt-3">
-      <b-list-group-item class="d-flex align-items-center" v-for="board in boards" :key="board.id">
-        <router-link :to="`/board/${board.id}`">
-          {{ board.title }}
-        </router-link>
+      <BoardListItem
+          v-for="board in getUserOwnedBoards()"
+          :key="board.id"
+          :board="board"
+          @delete-board="deleteBoard"/>
 
-
-
-        <router-link :to="`/board/${board.id}/burndown`"
-                     class="ml-auto mb-auto h5 pr-2">
-          <b-icon-bar-chart-line-fill flip-h />
-        </router-link>
-
-        <router-link :to="`/board/${board.id}/board-settings`"
-                     class="mb-auto h5 pr-2">
-          <b-icon-gear-fill />
-        </router-link>
-
-        <a href="#" class="mb-auto h4" :id="'dots-' + board.id" tabindex="0">
-          <b-icon-three-dots/>
-        </a>
-        <b-popover
-            ref="popover"
-            :target="'dots-' + board.id"
-            triggers="focus"
-            placement="bottom">
-          <button class="btn btn-danger" @click="deleteBoard(board.id)">Delete</button>
-        </b-popover>
-      </b-list-group-item>
-      <b-list-group-item v-if="boards.length === 0">
+      <b-list-group-item v-if="getUserOwnedBoards().length === 0">
         Nothing to see here... yet!
       </b-list-group-item>
+    </b-list-group>
+
+    <h5 class="mt-3" v-if="getUserEditorBoards().length > 0">Boards you have access to</h5>
+    <b-list-group class="mt-3">
+      <BoardListItem
+          v-for="board in getUserEditorBoards()"
+          :key="board.id"
+          :board="board"
+          not-owner=true />
     </b-list-group>
 
 
@@ -69,14 +56,13 @@
 <script>
 import {mapState} from "vuex";
 import {mapActions} from "vuex";
-import {BIconThreeDots, BIconBarChartLineFill, BIconGearFill} from "bootstrap-vue";
+import {mapGetters} from "vuex";
+import BoardListItem from "@/components/BoardListItem";
 
 export default {
   name: "BoardsList",
   components: {
-    BIconThreeDots,
-    BIconBarChartLineFill,
-    BIconGearFill
+    BoardListItem,
   },
   data() {
     return {
@@ -89,7 +75,11 @@ export default {
       userId: state => state.user.data.id,
       boards: state => state.user.boards,
       loggedIn: state => state.user.loggedIn
-    })
+    }),
+    ...mapGetters([
+      "getUserOwnedBoards",
+      "getUserEditorBoards"
+    ])
   },
   methods: {
     checkFormValidity() {
