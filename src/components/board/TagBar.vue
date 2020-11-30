@@ -30,6 +30,7 @@
 import Tag from "@/components/board/Tag";
 import { BIconPlus } from "bootstrap-vue";
 import AddTagPopover from "@/components/board/AddTagPopover";
+import {mapGetters} from "vuex";
 
 export default {
   name: "TagBar",
@@ -48,9 +49,9 @@ export default {
     tags() {
       return this.$store.getters.getTagsByCardId(this.cardId)
     },
-    allTagData() {
-      return this.$store.state.board.tags
-    }
+    ...mapGetters([
+        "allTagData"
+    ])
   },
   methods: {
     async addTag({newTag, newTagColor}) {

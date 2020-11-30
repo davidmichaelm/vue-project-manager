@@ -21,6 +21,7 @@
 <script>
 import Column from "@/components/board/Column";
 import {mapActions} from "vuex";
+import {mapGetters} from "vuex";
 import {boardBehavior} from "@/components/mixins/board-behavior";
 
 export default {
@@ -30,17 +31,17 @@ export default {
     Column
   },
   computed: {
-    columns() {
-      return this.$store.state.columns
-    },
     title: {
       get() {
-        return this.data?.title;
+        return this.board?.title;
       },
       set(value) {
         this.setBoardTitle(value)
       }
-    }
+    },
+    ...mapGetters([
+        "columns",
+    ])
   },
   methods: {
     debounceTitle(value) {

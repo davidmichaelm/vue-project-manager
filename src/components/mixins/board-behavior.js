@@ -1,4 +1,5 @@
 import {mapActions} from "vuex";
+import {mapGetters} from "vuex";
 
 export const boardBehavior = {
     props: ["id"],
@@ -9,14 +10,15 @@ export const boardBehavior = {
     },
     computed: {
         boardId() {
-            return this.$store.state.board?.id
+            return this.board?.id;
         },
-        data() {
-            return this.$store.state.board;
+        boardTitle() {
+            return this.board?.title;
         },
-        loggedIn() {
-            return this.$store.state.user.loggedIn;
-        }
+        ...mapGetters([
+            "isLoggedIn",
+            "board"
+        ])
     },
     methods: {
         ...mapActions([
@@ -25,7 +27,7 @@ export const boardBehavior = {
         ])
     },
     created() {
-        if (!this.loggedIn) {
+        if (!this.isLoggedIn) {
             this.$router.push("/");
             return;
         }

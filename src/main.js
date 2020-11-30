@@ -5,7 +5,7 @@ import "./plugins/bootstrap-vue";
 import "./plugins/vue-debounce";
 import App from "./App.vue";
 import firebase from "firebase/app";
-import {store} from "./store";
+import {store} from "./stores/store";
 
 Vue.config.productionTip = false
 

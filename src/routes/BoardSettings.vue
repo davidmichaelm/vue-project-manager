@@ -2,7 +2,7 @@
   <b-container>
     <BoardPageHeader
         :board-id="boardId"
-        :board-title="data.title"
+        :board-title="boardTitle"
         page-title="Board Settings"/>
 
     <b-card class="mt-4" header="Users">
@@ -12,7 +12,7 @@
       <b-list-group>
         <b-list-group-item
             class="d-flex align-items-center"
-            v-for="user in usersNoOwner"
+            v-for="user in boardUsersNoOwner"
             :key="user.id">
           {{ user.displayName }}
 
@@ -55,6 +55,7 @@
 import {boardBehavior} from "@/components/mixins/board-behavior";
 import BoardPageHeader from "@/components/board/BoardPageHeader";
 import {mapActions} from "vuex";
+import {mapGetters} from "vuex";
 import {db} from "@/db";
 import {BIconThreeDots} from "bootstrap-vue";
 
@@ -73,20 +74,19 @@ export default {
   },
   computed: {
     owner() {
-      return this.$store.getters.getBoardOwner()?.displayName;
+      return this.$store.getters.boardOwner?.displayName;
     },
-    users() {
-      return this.$store.state.users;
-    },
-    usersNoOwner() {
-      return this.$store.getters.getBoardUsersNoOwner();
-    }
+    ...mapGetters([
+        "boardOwner",
+        "boardUsersNoOwner",
+        "boardUserIds",
+        "boardUserData"
+    ])
   },
   methods: {
     init() {
-      const users = this.$store.getters.getBoardUsers();
-      if (users.length > 0) {
-        this.fetchUsers();
+      if (this.boardUserIds) {
+        this.fetchBoardUsers();
       } else {
         console.log("Error loading users");
       }
@@ -109,7 +109,7 @@ export default {
 
       let newResults = [];
       db.collection("users")
-          .where("displayName", "not-in", this.users.map(u => u.displayName))
+          .where("displayName", "not-in", this.boardUserData.map(u => u.displayName))
           .where("displayName", ">=", value)
           .where("displayName", "<=", value + "\uf8ff")
           .get()
@@ -125,7 +125,7 @@ export default {
     },
     ...mapActions([
       "addUserToBoard",
-      "fetchUsers",
+      "fetchBoardUsers",
       "removeUserFromBoard"
     ])
   },

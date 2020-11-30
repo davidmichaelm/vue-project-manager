@@ -1,14 +1,10 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import {vuexfireMutations, firestoreAction} from "vuexfire";
-import {db} from "./db";
-import firebase from 'firebase/app'
+import firebase from "firebase/app";
+import {firestoreAction} from "vuexfire";
+import {db} from "@/db";
 
-Vue.use(Vuex);
+export let boardRef;
 
-let boardRef;
-
-export const store = new Vuex.Store({
+export const boardStore = {
     state: {
         board: {
             title: "",
@@ -16,16 +12,26 @@ export const store = new Vuex.Store({
             roles: {}
         },
         columns: [],
-        cards: [],
-        user: {
-            loggedIn: false,
-            data: {},
-            boards: []
-        },
-        users: [],
-        userSearch: []
+        cards: []
+    },
+    mutations: {
+        updateCardsList(state, {column, cards}) {
+            column.cards = cards;
+        }
     },
     getters: {
+        board: (state) => {
+            return state.board ?? null;
+        },
+        boardId: (state) => {
+            return state.board?.id;
+        },
+        columns: (state) => {
+            return state.columns ?? null;
+        },
+        allTagData: (state, getters) => {
+            return getters.board.tags;
+        },
         getColumnById: (state) => (id) => {
             return state.columns.find(column => column.id === id);
         },
@@ -40,7 +46,7 @@ export const store = new Vuex.Store({
                 return getters.getColumnById(id).cards.map(c => getters.getCardById(c));
             }
         },
-        getMaxColumnIndex: (state) => () => {
+        maxColumnIndex: (state) => {
             if (state.columns.length > 0) {
                 return state.columns.map(column => column.index)
                     .reduce((a, b) => Math.max(a, b));
@@ -48,52 +54,23 @@ export const store = new Vuex.Store({
                 return 0;
             }
         },
-        getBoardUsers: (state) => () => {
-            if (state.board?.roles) {
-                return Object.keys(state.board.roles);
-            }
-
-            return null;
-        },
-        getBoardOwner: (state) => () => {
-            const roles = state.board.roles;
-            const ownerId = Object.keys(roles).find(r => roles[r] === "owner");
-            return state.users.filter(u => u.id === ownerId)[0];
-        },
-        getBoardUsersNoOwner: (state, getters) => () => {
-            const ids = getters.getBoardUsers()
-                .filter(u => u !== getters.getBoardOwner()?.id);
-            return state.users.filter(u => ids.includes(u.id));
-        },
-        getUserId: (state) => () => {
-            return state.user.data.id;
-        },
-        getUserOwnedBoards: (state, getters) => () => {
-            return state.user.boards.filter(b => b.roles[getters.getUserId()] === "owner");
-        },
-        getUserEditorBoards: (state, getters) => () => {
-            return state.user.boards.filter(b => b.roles[getters.getUserId()] === "editor");
-        }
-    },
-    mutations: {
-        setLoggedIn(state, value) {
-            state.user.loggedIn = value;
-        },
-        setUserData(state, data) {
-            state.user.data = data;
-        },
-        setUserBoards(state, boards) {
-            state.user.boards = boards;
-        },
-        updateCardsList(state, {column, cards}) {
-            column.cards = cards;
-        },
-        setUsers(state, users) {
-            state.users = users;
-        },
-        ...vuexfireMutations
     },
     actions: {
+        addBoard(context, {userId, title}) {
+            db.collection("boards").add({
+                title: title,
+                tags: {},
+                roles: {
+                    [userId]: "owner"
+                }
+            }).then(() => console.log("board added!"));
+        },
+        deleteBoard(context, boardId) {
+            db.collection("boards")
+                .doc(boardId)
+                .delete()
+                .then(() => console.log("board deleted!"))
+        },
         setBoardTitle(context, title) {
             boardRef.update({
                 title: title
@@ -109,7 +86,7 @@ export const store = new Vuex.Store({
             boardRef.collection("columns")
                 .add({
                     title: "",
-                    index: getters.getMaxColumnIndex() + 1,
+                    index: getters.maxColumnIndex + 1,
                     cards: []
                 })
                 .then(() => console.log('column added!'));
@@ -224,107 +201,6 @@ export const store = new Vuex.Store({
             unbindFirestoreRef("board");
             unbindFirestoreRef("columns");
             unbindFirestoreRef("cards");
-        }),
-        fetchUser({commit}, user) {
-            commit("setLoggedIn", user !== null);
-            if (user) {
-                commit("setUserData", {
-                    id: user.uid,
-                    displayName: user.displayName,
-                    // email: user.email
-                });
-            } else {
-                commit("setUserData", null);
-            }
-        },
-        getUserBoards({commit}, userId) {
-            db.collection("boards")
-                .where(`roles.${userId}`, "==", "owner")
-                .get()
-                .then((querySnapshot) => {
-                    let boards = [];
-                    querySnapshot.forEach(doc => {
-                        boards.push({
-                            id: doc.id,
-                            ...doc.data()
-                        });
-                    })
-                    commit("setUserBoards", boards);
-                });
-        },
-        bindUserBoards: firestoreAction(({bindFirestoreRef}, userId) => {
-            return bindFirestoreRef("user.boards",
-                db.collection("boards")
-                    .where(`roles.${userId}`, "in", ["owner", "editor"]));
-        }),
-        unbindUserBoards: firestoreAction(({unbindFirestoreRef}) => {
-            unbindFirestoreRef("user.boards");
-        }),
-        addBoard(context, {userId, title}) {
-            db.collection("boards").add({
-                title: title,
-                tags: {},
-                roles: {
-                    [userId]: "owner"
-                }
-            }).then(() => console.log("board added!"));
-        },
-        deleteBoard(context, boardId) {
-            db.collection("boards")
-                .doc(boardId)
-                .delete()
-                .then(() => console.log("board deleted!"))
-        },
-        addNewUser(context, user) {
-            console.log(user)
-            db.collection("users")
-                .doc(user.uid)
-                .set({
-                    displayName: user.displayName,
-                    email: user.email
-                })
-                .then(() => console.log("new user added!"))
-                .catch((e) => console.log(e))
-        },
-        fetchUsers({commit, getters}) {
-            return new Promise((resolve, reject) => {
-                db.collection("users")
-                    .where(firebase.firestore.FieldPath.documentId(), "in", getters.getBoardUsers())
-                    .get()
-                    .then(querySnapshot => {
-                        let users = [];
-                        querySnapshot.forEach(doc => {
-                            let user = doc.data();
-                            user.id = doc.id;
-                            users.push(user);
-                        })
-                        commit("setUsers", users);
-                        resolve();
-                    })
-                    .catch((e) => reject(e));
-            });
-        },
-        addUserToBoard({dispatch}, userId) {
-            return new Promise((resolve, reject) => {
-                boardRef
-                    .update({
-                        ["roles." + userId]: "editor"
-                    })
-                    .then(() => {
-                        dispatch("fetchUsers")
-                            .then(() => resolve());
-                    })
-                    .catch((e) => reject(e));
-            });
-        },
-        removeUserFromBoard({dispatch}, userId) {
-            boardRef
-                .update({
-                    ["roles." + userId]: firebase.firestore.FieldValue.delete()
-                })
-                .then(() => {
-                    dispatch("fetchUsers");
-                });
-        }
+        })
     }
-});
+}

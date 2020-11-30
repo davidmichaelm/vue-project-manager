@@ -8,20 +8,20 @@
     </div>
     <b-list-group class="mt-3">
       <BoardListItem
-          v-for="board in getUserOwnedBoards()"
+          v-for="board in userOwnedBoards"
           :key="board.id"
           :board="board"
           @delete-board="deleteBoard"/>
 
-      <b-list-group-item v-if="getUserOwnedBoards().length === 0">
+      <b-list-group-item v-if="userOwnedBoards.length === 0">
         Nothing to see here... yet!
       </b-list-group-item>
     </b-list-group>
 
-    <h5 class="mt-3" v-if="getUserEditorBoards().length > 0">Boards you have access to</h5>
+    <h5 class="mt-3" v-if="userEditorBoards.length > 0">Boards you have access to</h5>
     <b-list-group class="mt-3">
       <BoardListItem
-          v-for="board in getUserEditorBoards()"
+          v-for="board in userEditorBoards"
           :key="board.id"
           :board="board"
           not-owner=true />
@@ -54,7 +54,6 @@
 </template>
 
 <script>
-import {mapState} from "vuex";
 import {mapActions} from "vuex";
 import {mapGetters} from "vuex";
 import BoardListItem from "@/components/BoardListItem";
@@ -71,14 +70,12 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      userId: state => state.user.data.id,
-      boards: state => state.user.boards,
-      loggedIn: state => state.user.loggedIn
-    }),
     ...mapGetters([
-      "getUserOwnedBoards",
-      "getUserEditorBoards"
+      "userId",
+      "boards",
+      "userOwnedBoards",
+      "userEditorBoards",
+      "isLoggedIn"
     ])
   },
   methods: {
@@ -118,7 +115,7 @@ export default {
     ])
   },
   created() {
-    if (!this.loggedIn) {
+    if (!this.isLoggedIn) {
       this.$router.push("/");
       return;
     }

@@ -12,7 +12,7 @@
           Board Settings
         </b-nav-item>
       </template>
-      <template v-if="loggedIn">
+      <template v-if="isLoggedIn">
         <b-nav-item to="/myboards">
           My Boards
         </b-nav-item>
@@ -31,15 +31,15 @@
 </template>
 
 <script>
+import {mapGetters} from "vuex";
+
 export default {
   name: "Navbar",
   computed: {
-    loggedIn() {
-      return this.$store.state.user.loggedIn;
-    },
-    boardId() {
-      return this.$store.state.board?.id;
-    }
+    ...mapGetters([
+        "isLoggedIn",
+        "boardId"
+    ])
   }
 }
 </script>

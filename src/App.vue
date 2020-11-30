@@ -7,7 +7,7 @@
 
 <script>
 import Navbar from "@/components/Navbar";
-import {store} from "./store";
+import {store} from "./stores/store";
 import {router} from "./router";
 
 

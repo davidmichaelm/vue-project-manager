@@ -2,7 +2,7 @@
   <b-container>
     <BoardPageHeader
         :board-id="boardId"
-        :board-title="data.title"
+        :board-title="boardTitle"
         page-title="Burndown Chart"/>
 
     <div class="d-flex flex-row flex-wrap justify-content-center">
@@ -42,6 +42,7 @@
 <script>
 import {boardBehavior} from "@/components/mixins/board-behavior";
 import BoardPageHeader from "@/components/board/BoardPageHeader";
+import {mapGetters} from "vuex";
 
 export default {
   name: "Burndown",
@@ -58,9 +59,6 @@ export default {
     }
   },
   computed: {
-    columns() {
-      return this.$store.state.columns;
-    },
     columnOptions() {
       return this.columns.map(c => {
         return {
@@ -68,7 +66,10 @@ export default {
           text: c.title
         }
       })
-    }
+    },
+    ...mapGetters([
+        "columns"
+    ])
   }
 }
 </script>
