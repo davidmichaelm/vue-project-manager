@@ -8,7 +8,13 @@ export const boardStore = {
         board: {
             title: "",
             tags: {},
-            roles: {}
+            roles: {},
+            burndown: {
+                startDate: null,
+                endDate: null,
+                doingColumn: null,
+                doneColumn: null
+            }
         }
     },
     getters: {
@@ -20,6 +26,9 @@ export const boardStore = {
         },
         allTagData: (state, getters) => {
             return getters.board.tags;
+        },
+        burndown: (state) => {
+            return state.board?.burndown;
         }
     },
     actions: {
@@ -29,6 +38,12 @@ export const boardStore = {
                 tags: {},
                 roles: {
                     [userId]: "owner"
+                },
+                burndown: {
+                    startDate: null,
+                    endDate: null,
+                    doingColumn: null,
+                    doneColumn: null
                 }
             }).then(() => console.log("board added!"));
         },
@@ -70,6 +85,11 @@ export const boardStore = {
                     })
                     .catch((e) => reject(e));
             });
+        },
+        updateBurndownOption(context, {option, value}) {
+            boardRef.update({
+                [`burndown.${option}`]: value
+            })
         }
     }
 }
