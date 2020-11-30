@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="d-flex flex-column">
     <Navbar />
     <router-view></router-view>
   </div>
@@ -22,4 +22,7 @@ export default {
 </script>
 
 <style>
+body, #app {
+  min-height: 100vh;
+}
 </style>

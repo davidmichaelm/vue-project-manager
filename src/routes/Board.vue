@@ -1,20 +1,16 @@
 <template>
-  <div class="container">
-    <div class="row">
+  <div class="container-fluid flex-fill d-flex flex-column px-0">
       <input
-          class="h1"
+          class="h1 px-4"
           type="text"
           v-debounce="debounceTitle"
           :value="title"/>
-      <div class="col-12">
-        <div class="board row d-flex flex-nowrap">
+      <div class="board col-12 container-fluid d-flex flex-fill flex-nowrap">
           <Column v-for="column in columns" :key="column.id" :column-data="column"></Column>
           <div class="board-column col-4 col-md-5 m-2 p-2">
             <h4><a href="#" @click="addColumn">+ Add a column</a></h4>
           </div>
-        </div>
       </div>
-    </div>
   </div>
 </template>
 
@@ -79,6 +75,11 @@ input:focus {
 
 .board-column {
   flex: 0 0 auto;
+}
+
+
+.flex-fill {
+  flex:1 1 auto;
 }
 
 </style>

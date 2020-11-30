@@ -1,5 +1,5 @@
 <template>
-  <div class="board-column col-7 col-md-5 col-lg-4 col-xl-3 d-flex flex-column m-2">
+  <div class="board-column col-8 col-sm-6 col-md-5 col-xl-3 d-flex flex-column m-2">
     <div class="d-flex p-2">
       <label class="mr-auto h5">
         <input
@@ -151,5 +151,11 @@ input {
 
 input:focus {
   outline: none;
+}
+
+@media only screen and (min-width: 768px) {
+  .board-column {
+    max-width: 300px;
+  }
 }
 </style>
