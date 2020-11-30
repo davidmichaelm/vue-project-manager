@@ -17,10 +17,24 @@ export const cardStore = {
             if (state.cards.length > 0) {
                 return getters.getColumnById(id).cards.map(c => getters.getCardById(c));
             }
+        },
+        totalCardsByTagInColumn: (state, getters) => (columnId) => {
+            if (state.cards.length > 0) {
+                const cards = getters.getCardsByColumnId(columnId);
+                let tags = {};
+
+                cards.forEach(card => {
+                    card.tags.forEach(tag => {
+                        tags[tag] = tags[tag] + 1 || 1;
+                    })
+                });
+
+                return tags;
+            }
         }
     },
     actions: {
-        addCard(context, columnId) {
+        addCard({getters}, columnId) {
             boardRef.collection("cards").add({
                 title: "",
                 content: "",
@@ -29,15 +43,24 @@ export const cardStore = {
                 .then((doc) => {
                     boardRef.collection("columns").doc(columnId)
                         .update({
-                            cards: firebase.firestore.FieldValue.arrayUnion(doc.id)
+                            cards: firebase.firestore.FieldValue.arrayUnion(doc.id),
+                            [`history.${getters.historyDateString}.numCards`]: firebase.firestore.FieldValue.increment(1)
                         })
                         .then(() => console.log('card added!'));
                 })
         },
-        removeCard(context, {columnId, cardId}) {
+        removeCard({getters}, {columnId, cardId}) {
+            let tags = {};
+
+            getters.getTagsByCardId(cardId).forEach(tag => {
+                tags[`history.${getters.historyDateString}.numCardsWithTag.${tag}`] = firebase.firestore.FieldValue.increment(-1);
+            });
+
             boardRef.collection("columns").doc(columnId)
                 .update({
-                    cards: firebase.firestore.FieldValue.arrayRemove(cardId)
+                    cards: firebase.firestore.FieldValue.arrayRemove(cardId),
+                    [`history.${getters.historyDateString}.numCards`]: firebase.firestore.FieldValue.increment(-1),
+                    ...tags
                 })
                 .then(() => {
                     boardRef.collection("cards")

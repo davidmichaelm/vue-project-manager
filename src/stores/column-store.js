@@ -24,6 +24,23 @@ export const columnStore = {
             } else {
                 return 0;
             }
+        },
+        historyDateString: () => {
+            const date = new Date();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const year = date.getFullYear();
+            return `${month}-${day}-${year}`;
+        },
+        getColumnHistoryObject: (state, getters) => (columnId) => {
+            return {
+                ["history." + getters.historyDateString]: {
+                    numCards: getters.getCardsByColumnId(columnId).length,
+                    numCardsWithTag: {
+                        ...getters.totalCardsByTagInColumn(columnId)
+                    }
+                }
+            }
         }
     },
     actions: {
@@ -32,7 +49,8 @@ export const columnStore = {
                 .add({
                     title: "",
                     index: getters.maxColumnIndex + 1,
-                    cards: []
+                    cards: [],
+                    history: {}
                 })
                 .then(() => console.log('column added!'));
         },
@@ -57,7 +75,8 @@ export const columnStore = {
 
             boardRef.collection("columns").doc(columnId)
                 .update({
-                    cards: cards
+                    cards: cards,
+                    ...getters.getColumnHistoryObject(columnId)
                 }).then(() => console.log('cards list updated!'));
         },
         bindColumns: firestoreAction(({bindFirestoreRef}) => {
