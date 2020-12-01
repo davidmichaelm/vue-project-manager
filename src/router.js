@@ -25,5 +25,6 @@ const routes = [
 
 export const router = new VueRouter({
     mode: "history",
-    routes
+    routes,
+    base: "/js2/"
 });
