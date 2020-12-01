@@ -32,7 +32,7 @@ export const columnStore = {
             const year = date.getFullYear();
             return `${month}-${day}-${year}`;
         },
-        getColumnHistoryObject: (state, getters) => (columnId) => {
+        getColumnHistoryObjectForFirestore: (state, getters) => (columnId) => {
             return {
                 ["history." + getters.historyDateString]: {
                     numCards: getters.getCardsByColumnId(columnId).length,
@@ -76,7 +76,7 @@ export const columnStore = {
             boardRef.collection("columns").doc(columnId)
                 .update({
                     cards: cards,
-                    ...getters.getColumnHistoryObject(columnId)
+                    ...getters.getColumnHistoryObjectForFirestore(columnId)
                 }).then(() => console.log('cards list updated!'));
         },
         bindColumns: firestoreAction(({bindFirestoreRef}) => {
