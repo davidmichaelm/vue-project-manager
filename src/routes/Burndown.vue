@@ -45,6 +45,16 @@
       </div>
     </div>
 
+    <div class="d-flex flex-row flex-wrap">
+      <div class="col-12 col-md-6 my-3">
+        <label>Filter By Tag</label>
+        <b-select v-model="filterByTag" :options="filterByTagOptions">
+          <b-select-option :value="null">None</b-select-option>
+        </b-select>
+      </div>
+    </div>
+
+
   </b-container>
 </template>
 
@@ -78,8 +88,9 @@ export default {
         },
         lineWidth: 3,
         pointSize: 4,
-        vAxis: { format: "0" }
-      }
+        vAxis: {format: "0"}
+      },
+      filterByTag: null
     }
   },
   computed: {
@@ -126,6 +137,9 @@ export default {
           value: value
         });
       }
+    },
+    filterByTagOptions() {
+      return Object.keys(this.allTagData);
     },
     columnOptions() {
       return this.columns.map(c => {
@@ -183,7 +197,8 @@ export default {
     },
     ...mapGetters([
       "columns",
-      "burndown"
+      "burndown",
+      "allTagData"
     ])
   },
   methods: {
