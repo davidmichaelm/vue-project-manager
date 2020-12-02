@@ -42,8 +42,9 @@ export const boardStore = {
                 burndown: {
                     startDate: null,
                     endDate: null,
-                    doingColumn: null,
-                    doneColumn: null
+                    tasks: null,
+                    doneColumn: null,
+                    filterByTag: null
                 }
             }).then(() => console.log("board added!"));
         },

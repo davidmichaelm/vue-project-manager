@@ -26,17 +26,13 @@
         <label>End Date</label>
         <b-form-datepicker v-model="endDate"></b-form-datepicker>
       </div>
-
     </div>
 
     <div class="d-flex flex-row flex-wrap justify-content-center">
-
       <div class="d-flex flex-column col-12 col-md-6 my-3">
-        <label>Doing Column</label>
-        <b-form-select v-model="doingColumn" :options="columnOptions">
-        </b-form-select>
+        <label>Total Number of Tasks</label>
+        <b-input type="number" v-model="tasks" />
       </div>
-
 
       <div class="d-flex flex-column col-12 col-md-6 my-3">
         <label>Done Column</label>
@@ -53,7 +49,6 @@
         </b-select>
       </div>
     </div>
-
 
   </b-container>
 </template>
@@ -89,8 +84,7 @@ export default {
         lineWidth: 3,
         pointSize: 4,
         vAxis: {format: "0"}
-      },
-      filterByTag: null
+      }
     }
   },
   computed: {
@@ -116,26 +110,37 @@ export default {
         });
       }
     },
-    doingColumn: {
+    tasks: {
       get() {
-        return this.burndown.doingColumn;
+        return parseInt(this.burndown?.tasks);
       },
       set(value) {
         this.updateBurndownOption({
-          option: "doingColumn",
-          value: value
+          option: "tasks",
+          value: parseInt(value)
         });
       }
     },
     doneColumn: {
       get() {
-        return this.burndown.doneColumn;
+        return this.burndown?.doneColumn;
       },
       set(value) {
         this.updateBurndownOption({
           option: "doneColumn",
           value: value
         });
+      }
+    },
+    filterByTag: {
+      get() {
+        return this.burndown?.filterByTag;
+      },
+      set(value) {
+        this.updateBurndownOption({
+          option: "filterByTag",
+          value: value
+        })
       }
     },
     filterByTagOptions() {
@@ -157,14 +162,8 @@ export default {
       const ed = this.endDate.split("-");
       return new Date(ed[0], ed[1] - 1, ed[2]) ?? null;
     },
-    doingColumnHistory() {
-      return this.$store.getters.getColumnById(this.doingColumn)?.history;
-    },
     doneColumnHistory() {
       return this.$store.getters.getColumnById(this.doneColumn)?.history;
-    },
-    doingStartHistory() {
-      return this.doingColumnHistory[this.getDateStringForDate(this.startDateObject)] ?? null;
     },
     daysBetweenDates() {
       const timeBetweenDates = this.endDateObject.getTime() - this.startDateObject.getTime();
@@ -173,23 +172,31 @@ export default {
     myChartData() {
       if (!this.startDate
           || !this.endDate
-          || !this.doingColumnHistory
           || !this.doneColumnHistory
-          || (this.doingColumn === this.doneColumn)
-          || !this.doingStartHistory
-          || !this.doingStartHistory.numCards
-          || this.daysBetweenDates < 0) return null;
+          || this.daysBetweenDates < 0
+          || !this.tasks) return null;
 
-      let tasks = this.doingStartHistory.numCards;
-      let tasksPerDay = tasks / this.daysBetweenDates;
+      let tasksPerDay = this.tasks / this.daysBetweenDates;
 
       let results = [["Date", "Ideal", "Actual"]];
+      let latestTasksComplete = this.tasks;
       for (let i = 0; i <= this.daysBetweenDates; i++) {
         let date = new Date(+this.startDateObject).setDate(this.startDateObject.getDate() + i);
 
-        let ideal = tasks - (tasksPerDay * i);
+        let ideal = this.tasks - (tasksPerDay * i);
+
         const dateHistory = this.doneColumnHistory[this.getDateStringForDate(date)];
-        let actual = dateHistory ? tasks - dateHistory?.numCards : null;
+        let numCards = !this.filterByTag
+            ? dateHistory?.numCards
+            : dateHistory?.numCardsWithTag[this.filterByTag];
+
+        let actual;
+        if (this.isTodayOrEarlier(date)) {
+          actual = numCards ? this.tasks - numCards : latestTasksComplete;
+          latestTasksComplete = actual;
+        } else {
+          actual = null;
+        }
 
         results.push([new Date(date), ideal, actual]);
       }
@@ -208,6 +215,11 @@ export default {
       const day = date.getDate();
       const year = date.getFullYear();
       return `${month}-${day}-${year}`;
+    },
+    isTodayOrEarlier(date) {
+      const today = new Date()
+      today.setHours(0,0,0,0);
+      return date <= today;
     },
     ...mapActions([
       "updateBurndownOption"
