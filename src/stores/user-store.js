@@ -94,8 +94,7 @@ export const userStore = {
             db.collection("users")
                 .doc(user.uid)
                 .set({
-                    displayName: user.displayName,
-                    email: user.email
+                    displayName: user.displayName
                 })
                 .then(() => console.log("new user added!"))
                 .catch((e) => console.log(e))
