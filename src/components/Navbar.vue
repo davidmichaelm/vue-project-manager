@@ -1,7 +1,7 @@
 <template>
-  <b-navbar type="dark" variant="dark" class="mb-4">
+  <b-navbar  class="mb-4">
     <b-navbar-brand to="/">
-      Project Manager
+      Vue Project Manager
     </b-navbar-brand>
     <b-navbar-nav class="ml-auto">
       <template v-if="boardId">
@@ -16,7 +16,7 @@
         <b-nav-item to="/myboards">
           My Boards
         </b-nav-item>
-        <b-nav-item to="/logout">
+        <b-nav-item @click="logOut">
           Logout
         </b-nav-item>
       </template>
@@ -32,6 +32,7 @@
 
 <script>
 import {mapGetters} from "vuex";
+import firebase from "firebase/app";
 
 export default {
   name: "Navbar",
@@ -40,6 +41,23 @@ export default {
         "isLoggedIn",
         "boardId"
     ])
+  },
+  methods: {
+    logOut() {
+      if (this.isLoggedIn) {
+        firebase.auth().signOut()
+            .then(() => {
+              if (this.$route.path !== "/") {
+                this.$router.push("/");
+              }
+            })
+            .catch(() => {
+              console.log("Error: Unable to sign out.");
+            });
+      } else {
+        console.log("Error: Unable to sign out.");
+      }
+    }
   }
 }
 </script>
