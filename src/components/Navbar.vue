@@ -1,8 +1,12 @@
 <template>
-  <b-navbar  class="mb-4">
+  <b-navbar toggleable="md" class="mb-4">
     <b-navbar-brand to="/">
       Vue Project Manager
     </b-navbar-brand>
+
+    <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+
+    <b-collapse id="nav-collapse" is-nav>
     <b-navbar-nav class="ml-auto">
       <template v-if="boardId">
         <b-nav-item :to="`/board/${boardId}/burndown`">
@@ -27,6 +31,7 @@
       </template>
 
     </b-navbar-nav>
+    </b-collapse>
   </b-navbar>
 </template>
 
