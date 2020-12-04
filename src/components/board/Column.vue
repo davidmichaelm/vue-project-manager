@@ -1,6 +1,6 @@
 <template>
-  <div class="board-column col-8 col-sm-6 col-md-5 col-xl-3 d-flex flex-column m-2">
-    <div class="d-flex p-2">
+  <div class="board-column col-8 col-sm-6 col-md-5 col-xl-3 d-flex flex-column px-0 mr-3">
+    <div class="d-flex">
       <label class="mr-auto h5">
         <input
             type="text"

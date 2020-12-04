@@ -1,5 +1,5 @@
 <template>
-  <b-card class="draggable">
+  <b-card class="draggable mb-2">
     <div class="d-flex">
       <b-card-title class="h5">
         <input

@@ -1,17 +1,18 @@
 <template>
-  <div class="container-fluid flex-fill d-flex flex-column px-0">
+    <b-container>
       <input
-          class="h1 px-4"
+          class="h1"
           type="text"
           v-debounce="debounceTitle"
           :value="title"/>
-      <div class="board col-12 container-fluid d-flex flex-fill flex-nowrap">
-          <Column v-for="column in columns" :key="column.id" :column-data="column"></Column>
-          <div class="board-column col-4 col-md-5 m-2 p-2">
-            <h4><a href="#" @click="addColumn">+ Add a column</a></h4>
-          </div>
+
+      <div class="board col-12 container-fluid d-flex flex-fill flex-nowrap px-0">
+        <Column v-for="column in columns" :key="column.id" :column-data="column"></Column>
+        <div class="board-column col-4 col-md-5 m-2 p-2">
+          <h4><a href="#" @click="addColumn">+ Add a column</a></h4>
+        </div>
       </div>
-  </div>
+    </b-container>
 </template>
 
 <script>
@@ -36,7 +37,7 @@ export default {
       }
     },
     ...mapGetters([
-        "columns",
+      "columns",
     ])
   },
   methods: {
@@ -79,7 +80,7 @@ input:focus {
 
 
 .flex-fill {
-  flex:1 1 auto;
+  flex: 1 1 auto;
 }
 
 </style>

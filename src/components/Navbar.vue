@@ -1,5 +1,5 @@
 <template>
-  <b-navbar toggleable="md" class="mb-4">
+  <b-navbar toggleable="md" class="mb-3">
     <b-navbar-brand to="/">
       Vue Project Manager
     </b-navbar-brand>
