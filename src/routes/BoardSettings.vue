@@ -29,9 +29,10 @@
         </b-list-group-item>
         <b-list-group-item>
           <input
-                 :value="userSearchString"
-                 v-debounce="debounceUserSearchString"
-                 placeholder="Search users by display name to add as an editor..."/>
+              id="userSearch"
+              :value="userSearchString"
+              v-debounce="debounceUserSearchString"
+              placeholder="Search users by display name to add as an editor..."/>
         </b-list-group-item>
       </b-list-group>
       <b-list-group class="ml-5 shadow rounded-0 p-0">
@@ -47,6 +48,15 @@
           </b-button>
         </b-list-group-item>
       </b-list-group>
+    </b-card>
+
+    <b-card class="mt-4" header="Board Title">
+      <b-input-group>
+        <b-form-input v-model="boardTitleInput" @keypress="handleTitleKeypress"></b-form-input>
+        <b-input-group-append>
+          <b-button variant="primary" @click="setBoardTitle(boardTitleInput)">Rename</b-button>
+        </b-input-group-append>
+      </b-input-group>
     </b-card>
   </b-container>
 </template>
@@ -69,7 +79,8 @@ export default {
   data() {
     return {
       userSearchString: "",
-      userResults: []
+      userResults: [],
+      boardTitleInput: ""
     }
   },
   computed: {
@@ -77,10 +88,10 @@ export default {
       return this.$store.getters.boardOwner?.displayName;
     },
     ...mapGetters([
-        "boardOwner",
-        "boardUsersNoOwner",
-        "boardUserIds",
-        "boardUserData"
+      "boardOwner",
+      "boardUsersNoOwner",
+      "boardUserIds",
+      "boardUserData"
     ])
   },
   methods: {
@@ -90,12 +101,14 @@ export default {
       } else {
         console.log("Error loading users");
       }
+
+      this.boardTitleInput = this.boardTitle;
     },
     handleUserInvite(userId) {
       this.addUserToBoard(userId)
-        .then(() => {
-          this.searchUsers(this.userSearchString);
-        });
+          .then(() => {
+            this.searchUsers(this.userSearchString);
+          });
     },
     debounceUserSearchString(value) {
       this.userSearchString = value;
@@ -123,10 +136,18 @@ export default {
             this.userResults = newResults;
           });
     },
+    handleTitleKeypress(event) {
+      if (event.key === "Enter") {
+        console.log("keypress")
+
+        this.setBoardTitle(this.boardTitleInput);
+      }
+    },
     ...mapActions([
       "addUserToBoard",
       "fetchBoardUsers",
-      "removeUserFromBoard"
+      "removeUserFromBoard",
+      "setBoardTitle"
     ])
   },
   created() {
@@ -142,7 +163,7 @@ export default {
 </script>
 
 <style scoped>
-input {
+#userSearch {
   width: 100%;
 
   border: none;

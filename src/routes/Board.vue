@@ -1,10 +1,6 @@
 <template>
     <b-container>
-      <input
-          class="h1"
-          type="text"
-          v-debounce="debounceTitle"
-          :value="title"/>
+      <h1>{{ title }}</h1>
 
       <div class="board col-12 container-fluid d-flex flex-fill flex-nowrap px-0">
         <Column v-for="column in columns" :key="column.id" :column-data="column"></Column>
@@ -28,24 +24,15 @@ export default {
     Column
   },
   computed: {
-    title: {
-      get() {
-        return this.board?.title;
-      },
-      set(value) {
-        this.setBoardTitle(value)
-      }
+    title() {
+      return this.board?.title;
     },
     ...mapGetters([
       "columns",
     ])
   },
   methods: {
-    debounceTitle(value) {
-      this.title = value;
-    },
     ...mapActions([
-      "setBoardTitle",
       "addColumn",
       "initBoard",
       "unbindBoard"
