@@ -1,5 +1,5 @@
 <template>
-    <b-container>
+    <b-container class="container-fluid flex-fill d-flex flex-column px-0">
       <div class="d-flex flex-row flex-wrap align-items-center">
         <h1 class="mr-3">{{ title }}</h1>
 
