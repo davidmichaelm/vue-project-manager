@@ -50,7 +50,7 @@
 import Card from "@/components/board/Card";
 import {BIconThreeDots, BIconPlus} from 'bootstrap-vue';
 import draggable from "vuedraggable";
-import { mapActions } from 'vuex'
+import {mapActions, mapGetters} from 'vuex'
 
 export default {
   name: "Column",
@@ -81,7 +81,11 @@ export default {
     },
     cards: {
       get() {
-        return this.$store.getters.getCardsByColumnId(this.id) ?? [];
+        if (this.filterByTags.length > 0) {
+          return this.$store.getters.getCardsByColumnIdAndTags(this.id, this.filterByTags) ?? [];
+        } else {
+          return this.$store.getters.getCardsByColumnId(this.id) ?? [];
+        }
       },
       set(value) {
         this.$store.dispatch("updateCardsList", {
@@ -89,7 +93,11 @@ export default {
           cards: value.map(v => v.id)
         });
       }
-    }
+    },
+    ...mapGetters([
+        "getCardsByColumnIdAndTags",
+        "filterByTags"
+    ])
   },
   methods: {
     handleTitleKeypress(event) {

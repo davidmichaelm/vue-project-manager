@@ -1,67 +1,87 @@
 <template>
-  <b-collapse :id="id">
-    <div class="p-3 mb-3 border rounded col-lg-9 col-xl-8">
-      <div class="d-flex flex-row">
-        <h4>Tags</h4>
-        <a href="#" class="ml-auto" v-b-toggle="id">Close</a>
-      </div>
-      <div class="d-flex flex-column flex-md-row">
-        <div class="col-md-6 px-0">
-          <div class="d-flex flex-row flex-wrap align-items-center align-content-start col-12 px-0">
-            <div v-for="tag in tags" :key="tag">
-              <Tag
-                  class="tag"
-                  :name="tag"
-                  :tagData="allTagData[tag]"
-                  @click="showTag(tag)"/>
-            </div>
-
-            <a href="#" id="'add-tag-collapse" class="text-primary d-flex align-items-center">
-              <b-icon-plus class="h4 mb-0"/>
-              Add a tag
-            </a>
-            <AddTagPopover @addTag="addTag" target="'add-tag-collapse" :all-tag-data="allTagData" />
-          </div>
-        </div>
-
-        <div v-if="tagToShow" class="col-12 col-md-6 border rounded p-2 mt-2 mt-md-0">
+  <b-collapse class="p-3 mb-3 border rounded col-lg-9 col-xl-8" :id="id">
+    <div class="d-flex flex-row">
+      <h4>Tags</h4>
+      <a href="#" class="ml-auto" v-b-toggle="id">Close</a>
+    </div>
+    <div class="d-flex flex-column flex-md-row">
+      <div class="col-md-6 px-0">
+        <div class="d-flex flex-row flex-wrap align-items-center align-content-start col-12 px-0">
           <Tag
-              :name="tagToShow.name"
-              :tagData="tagToShow"/>
+              v-for="tag in tags"
+              :key="tag"
+              class="tag"
+              :name="tag"
+              :tagData="allTagData[tag]"
+              @click="showTag(tag)"/>
 
-          <div class="m-1">
-            <div class="d-flex">
-              <div class="text-nowrap mr-3">Color:</div>
-              <a href="#" id="tag-bg" :class="tagToShow.backgroundColor + ' btn btn-block col-6'"></a>
-            </div>
+          <a href="#" id="'add-tag-collapse" class="text-primary d-flex align-items-center">
+            <b-icon-plus class="h4 mb-0"/>
+            Add a tag
+          </a>
+          <AddTagPopover @addTag="addTag" target="'add-tag-collapse" :all-tag-data="allTagData"/>
+        </div>
+      </div>
 
-            <b-popover
-                target="tag-bg"
-                ref="popover"
-                triggers="focus"
-                placement="bottom">
-              <div>
-                <a href="#" class="btn btn-primary m-1" @click="setTagColor('bg-primary')"></a>
-                <a href="#" class="btn btn-secondary m-1" @click="setTagColor('bg-secondary')"></a>
-                <a href="#" class="btn btn-success m-1" @click="setTagColor('bg-success')"></a>
-                <a href="#" class="btn btn-danger m-1" @click="setTagColor('bg-danger')"></a>
-                <a href="#" class="btn btn-warning m-1" @click="setTagColor('bg-warning')"></a>
-                <a href="#" class="btn btn-info m-1" @click="setTagColor('bg-info')"></a>
-                <a href="#" class="btn btn-dark m-1" @click="setTagColor('bg-dark')"></a>
-              </div>
-            </b-popover>
+      <div v-if="tagToShow" class="col-12 col-md-6 border rounded p-2 mt-2 mt-md-0">
+        <Tag
+            :name="tagToShow.name"
+            :tagData="tagToShow"/>
 
-            <div class="mt-2">
-              <b-button variant="outline-danger" size="sm" @click="removeTagFromBoard(tagToShow.name)">Delete</b-button>
-            </div>
+        <div class="m-1">
+          <div class="d-flex">
+            <div class="text-nowrap mr-3">Color:</div>
+            <a href="#" id="tag-bg" :class="tagToShow.backgroundColor + ' btn btn-block col-6'"></a>
           </div>
 
-        </div>
+          <b-popover
+              target="tag-bg"
+              ref="popover"
+              triggers="focus"
+              placement="bottom">
+            <div>
+              <a href="#" class="btn btn-primary m-1" @click="setTagColor('bg-primary')"></a>
+              <a href="#" class="btn btn-secondary m-1" @click="setTagColor('bg-secondary')"></a>
+              <a href="#" class="btn btn-success m-1" @click="setTagColor('bg-success')"></a>
+              <a href="#" class="btn btn-danger m-1" @click="setTagColor('bg-danger')"></a>
+              <a href="#" class="btn btn-warning m-1" @click="setTagColor('bg-warning')"></a>
+              <a href="#" class="btn btn-info m-1" @click="setTagColor('bg-info')"></a>
+              <a href="#" class="btn btn-dark m-1" @click="setTagColor('bg-dark')"></a>
+            </div>
+          </b-popover>
 
-        <div v-else
-             class="d-flex col-12 col-md-6 p-4 p-md-0 mt-2 mt-md-0 border rounded justify-content-center align-items-center text-secondary">
-          Click a tag to edit
+          <div class="mt-2">
+            <b-button variant="outline-danger" size="sm" @click="removeTagFromBoard(tagToShow.name)">Delete</b-button>
+          </div>
         </div>
+      </div>
+
+      <div v-else
+           class="d-flex col-12 col-md-6 p-4 p-md-0 mt-2 mt-md-0 border rounded justify-content-center align-items-center text-secondary">
+        Click a tag to edit
+      </div>
+    </div>
+
+    <hr/>
+
+    <b-input-group class="mt-3" prepend="Filter By">
+      <b-form-select @change="addFilter" :options="filterOptions" v-model="selected">
+        <b-select-option value="null"></b-select-option>
+      </b-form-select>
+    </b-input-group>
+    <div class="d-flex flex-row align-items-center pt-3">
+      <div class="pr-2">Current filters: </div>
+      <div v-if="filterByTags.length > 0">
+        <Tag
+            v-for="tag in filterByTags" :key="tag"
+            class="tag"
+            :name="tag"
+            :tagData="allTagData[tag]"
+            remove-button=true
+            @removeTag="removeFilter(tag)"/>
+      </div>
+      <div v-else>
+        None
       </div>
     </div>
   </b-collapse>
@@ -83,32 +103,16 @@ export default {
   },
   data() {
     return {
-      tagToShowName: null
+      tagToShowName: null,
+      selected: null
     }
   },
   computed: {
     tags() {
       return Object.keys(this.allTagData);
     },
-    selectAll: {
-      get: function () {
-        return this.tags ? this.selected.length === this.tags.length : false;
-      },
-      set: function (value) {
-        if (value) {
-          this.selected = this.tags;
-        } else if (this.selected === this.tags) {
-          this.selected = [];
-        }
-      }
-    },
-    selected: {
-      get() {
-        return this.filterByTags;
-      },
-      set(value) {
-        this.setFilterByTags(value);
-      }
+    filterOptions() {
+      return this.tags.filter(t => !this.filterByTags.includes(t))
     },
     tagToShow() {
       if (!this.tagToShowName) return null;
@@ -152,6 +156,15 @@ export default {
           }
         });
       }
+    },
+    addFilter(value) {
+      this.selected = null;
+      this.setFilterByTags([value, ...this.filterByTags]);
+    },
+    removeFilter(value) {
+      let newValue = this.filterByTags;
+      newValue.splice(this.filterByTags.indexOf(value), 1);
+      this.setFilterByTags(newValue)
     },
     ...mapActions([
       "setFilterByTags",

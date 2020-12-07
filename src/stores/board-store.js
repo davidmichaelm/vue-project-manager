@@ -106,7 +106,8 @@ export const boardStore = {
 
                 Promise.all([context.dispatch("bindBoard"),
                     context.dispatch("bindColumns"),
-                    context.dispatch("bindCards")])
+                    context.dispatch("bindCards"),
+                    context.dispatch("getFilterByTags")])
                     .then(() => {
                         console.log("all data retrieved!")
                         resolve();

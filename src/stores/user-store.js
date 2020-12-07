@@ -11,7 +11,7 @@ export const userStore = {
             boards: []
         },
         boardUsers: [],
-        userSearch: []
+        filterByTags: []
     },
     mutations: {
         setLoggedIn(state, value) {
@@ -23,6 +23,9 @@ export const userStore = {
         setUsers(state, users) {
             state.boardUsers = users;
         },
+        setFilterByTags(state, tags) {
+            state.filterByTags = tags ?? [];
+        }
     },
     getters: {
         userId: (state) => {
@@ -66,20 +69,25 @@ export const userStore = {
         },
         userEditorBoards: (state, getters) => {
             return state.user.boards.filter(b => b.roles[getters.userId] === "editor");
+        },
+        filterByTags: (state) => {
+            return state.filterByTags;
         }
     },
     actions: {
         fetchUser({commit}, user) {
-            commit("setLoggedIn", user !== null);
-            if (user) {
-                commit("setUserData", {
-                    id: user.uid,
-                    displayName: user.displayName,
-                    // email: user.email
-                });
-            } else {
-                commit("setUserData", null);
-            }
+            return new Promise((resolve) => {
+                commit("setLoggedIn", user !== null);
+                if (user) {
+                    commit("setUserData", {
+                        id: user.uid,
+                        displayName: user.displayName,
+                    });
+                } else {
+                    commit("setUserData", null);
+                }
+                resolve();
+            });
         },
         bindUserBoards: firestoreAction(({bindFirestoreRef}, userId) => {
             return bindFirestoreRef("user.boards",
@@ -138,6 +146,29 @@ export const userStore = {
                 .then(() => {
                     dispatch("fetchUsers");
                 });
+        },
+        getFilterByTags({getters, commit}) {
+            return new Promise((resolve, reject) => {
+                console.log(getters);
+                db.collection("users")
+                    .doc(getters.userId)
+                    .get()
+                    .then(querySnapshot => {
+                        commit("setFilterByTags", querySnapshot.data().filterByTags)
+                        resolve();
+                    })
+                    .catch(e => reject(e));
+            });
+        },
+        setFilterByTags({getters, commit}, tags) {
+            commit("setFilterByTags", tags);
+            db.collection("users")
+                .doc(getters.userId)
+                .update({
+                    filterByTags: tags
+                })
+                .then(() => console.log("set tags to filter by!"))
+                .catch((e) => console.log(e))
         }
     }
 }

@@ -31,6 +31,17 @@ export const cardStore = {
 
                 return tags;
             }
+        },
+        getCardsByTag: (state) => (tag) => {
+            return state.cards.filter(c => c.tags.includes(tag));
+        },
+        getCardsByColumnIdAndTags: (state, getters) => (columnId, tags) => {
+            // Get all cards from a column
+            const cardsByColumn = getters.getCardsByColumnId(columnId);
+            if (cardsByColumn) {
+                // filter down to cards with tags that are in the given tags array
+                return cardsByColumn.filter(card => card.tags.some(t => tags.includes(t)));
+            }
         }
     },
     actions: {
@@ -38,7 +49,7 @@ export const cardStore = {
             boardRef.collection("cards").add({
                 title: "",
                 content: "",
-                tags: []
+                tags: getters.filterByTags ?? []
             })
                 .then((doc) => {
                     boardRef.collection("columns").doc(columnId)
