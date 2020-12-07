@@ -15,7 +15,15 @@
           </router-link>
 
           <a href="#" v-b-toggle.tag-collapse class="h4">
-            <b-icon-tag-fill />
+            <template v-if="this.filterByTags.length === 0">
+              <b-icon-tag-fill />
+            </template>
+            <template v-else>
+              <b-iconstack>
+                <b-icon-tag-fill stacked></b-icon-tag-fill>
+                <b-icon-circle-fill stacked variant="danger" shift-h="5" shift-v="6" scale=".3"></b-icon-circle-fill>
+              </b-iconstack>
+            </template>
           </a>
         </div>
       </div>
@@ -36,7 +44,7 @@ import Column from "@/components/board/Column";
 import {mapActions} from "vuex";
 import {mapGetters} from "vuex";
 import {boardBehavior} from "@/components/mixins/board-behavior";
-import {BIconBarChartLineFill, BIconGearFill, BIconTagFill} from "bootstrap-vue";
+import {BIconBarChartLineFill, BIconGearFill, BIconTagFill, BIconCircleFill, BIconstack} from "bootstrap-vue";
 import TagCollapse from "@/components/board/TagCollapse";
 
 export default {
@@ -47,6 +55,8 @@ export default {
     BIconBarChartLineFill,
     BIconGearFill,
     BIconTagFill,
+    BIconCircleFill,
+    BIconstack,
     TagCollapse
   },
   computed: {
@@ -54,7 +64,8 @@ export default {
       return this.board?.title;
     },
     ...mapGetters([
-      "columns"
+      "columns",
+      "filterByTags"
     ])
   },
   methods: {

@@ -149,7 +149,6 @@ export const userStore = {
         },
         getFilterByTags({getters, commit}) {
             return new Promise((resolve, reject) => {
-                console.log(getters);
                 db.collection("users")
                     .doc(getters.userId)
                     .get()
