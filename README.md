@@ -1,4 +1,8 @@
-# vue-kanban
+# Vue Project Manager
+
+Final project for Javascript 2 class.
+
+Built with Vue.js, Firebase, and Bootstrap.
 
 ## Project setup
 ```
