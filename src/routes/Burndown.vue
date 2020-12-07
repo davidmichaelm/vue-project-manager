@@ -6,9 +6,9 @@
         page-title="Burndown Chart"/>
 
     <GChart
-        v-if="myChartData"
+        v-if="chartData"
         type="LineChart"
-        :data="myChartData"
+        :data="chartData"
         :options="chartOptions"/>
 
     <h5 v-else
@@ -70,12 +70,6 @@ export default {
   data() {
     return {
       validChartData: true,
-      // Array will be automatically processed with visualization.arrayToDataTable function
-      chartData: [
-        ['Date', 'Ideal Tasks Remaining', 'Actual Tasks Remaining'],
-        ['11/30/2020', 2, 2],
-        ['12/30/2020', 1, 2],
-      ],
       chartOptions: {
         legend: {
           position: "top",
@@ -83,7 +77,11 @@ export default {
         },
         lineWidth: 3,
         pointSize: 4,
-        vAxis: {format: "0"}
+        vAxis: {
+          title: "Tasks Completed",
+          format: "0"
+        },
+
       }
     }
   },
@@ -169,7 +167,7 @@ export default {
       const timeBetweenDates = this.endDateObject.getTime() - this.startDateObject.getTime();
       return timeBetweenDates / (1000 * 3600 * 24);
     },
-    myChartData() {
+    chartData() {
       if (!this.startDate
           || !this.endDate
           || !this.doneColumnHistory
@@ -178,7 +176,7 @@ export default {
 
       let tasksPerDay = this.tasks / this.daysBetweenDates;
 
-      let results = [["Date", "Ideal", "Actual"]];
+      let results = [["Date", "Ideal Tasks Completed", "Actual Tasks Completed"]];
       let latestTasksComplete = this.tasks;
       for (let i = 0; i <= this.daysBetweenDates; i++) {
         let date = new Date(+this.startDateObject).setDate(this.startDateObject.getDate() + i);
