@@ -1,7 +1,8 @@
 <template>
-  <div class="m-1 mb-2">
+  <div class="m-1 mb-2" @click="$emit('click')" v-if="tagData">
     <span :class="'p-1 tag ' + tagData.backgroundColor + ' ' + tagData.color">{{ name }}</span>
     <b-icon-x-circle
+        v-if="removeButton"
         class="closeButton bg-light border-dark rounded-circle"
         variant="dark"
         @click="removeTag" />
@@ -13,7 +14,7 @@ import {BIconXCircle} from "bootstrap-vue";
 
 export default {
   name: "Tag",
-  props: ["name", "tagData"],
+  props: ["name", "tagData", "removeButton"],
   components: {
     BIconXCircle
   },

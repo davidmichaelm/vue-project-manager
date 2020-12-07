@@ -1,6 +1,26 @@
 <template>
     <b-container>
-      <h1>{{ title }}</h1>
+      <div class="d-flex flex-row flex-wrap align-items-center">
+        <h1 class="mr-3">{{ title }}</h1>
+
+        <div class="d-flex flex-row align-items-center">
+          <router-link :to="`/board/${board.id}/burndown`"
+                       class="h4 mr-2">
+            <b-icon-bar-chart-line-fill flip-h/>
+          </router-link>
+
+          <router-link :to="`/board/${board.id}/board-settings`"
+                       class="h4 mr-2">
+            <b-icon-gear-fill />
+          </router-link>
+
+          <a href="#" v-b-toggle.tag-collapse class="h4">
+            <b-icon-tag-fill />
+          </a>
+        </div>
+      </div>
+
+      <TagCollapse id="tag-collapse" />
 
       <div class="board col-12 container-fluid d-flex flex-fill flex-nowrap px-0">
         <Column v-for="column in columns" :key="column.id" :column-data="column"></Column>
@@ -16,19 +36,25 @@ import Column from "@/components/board/Column";
 import {mapActions} from "vuex";
 import {mapGetters} from "vuex";
 import {boardBehavior} from "@/components/mixins/board-behavior";
+import {BIconBarChartLineFill, BIconGearFill, BIconTagFill} from "bootstrap-vue";
+import TagCollapse from "@/components/board/TagCollapse";
 
 export default {
   name: "Board",
   mixins: [boardBehavior],
   components: {
-    Column
+    Column,
+    BIconBarChartLineFill,
+    BIconGearFill,
+    BIconTagFill,
+    TagCollapse
   },
   computed: {
     title() {
       return this.board?.title;
     },
     ...mapGetters([
-      "columns",
+      "columns"
     ])
   },
   methods: {
@@ -47,7 +73,6 @@ a {
 }
 
 input {
-  width: 100%;
 
   border: none;
 }

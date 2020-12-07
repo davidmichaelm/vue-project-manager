@@ -7,6 +7,7 @@
           :name="tag"
           :tagData="allTagData[tag]"
           :key="tag"
+          remove-button=true
           @removeTag="removeTag(tag)"/>
 
         <a href="#" :id="'add-tag-' + cardId">

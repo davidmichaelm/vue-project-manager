@@ -1,5 +1,6 @@
 import {firestoreAction} from "vuexfire";
 import {db} from "@/db";
+import firebase from "firebase/app";
 
 export let boardRef;
 
@@ -64,6 +65,32 @@ export const boardStore = {
             boardRef.update({
                 [`tags.${tag}`]: tagData
             }).then(() => console.log('tag added!'));
+        },
+        updateTag(context, {tag, tagField, tagFieldData}) {
+            return new Promise((resolve, reject) => {
+                boardRef.update({
+                    [`tags.${tag}.${tagField}`]: tagFieldData
+                })
+                    .then(() => {
+                    resolve();
+                    console.log('tag updated!')
+                })
+                    .catch((e) => reject(e));
+            })
+        },
+        removeTagFromBoard({getters, dispatch}, tag) {
+            boardRef.update({
+                [`tags.${tag}`]: firebase.firestore.FieldValue.delete()
+            })
+                .then(() => {
+                    getters.getCardsByTag(tag).forEach(card => {
+                        dispatch("removeCardTag", {
+                            cardId: card.id,
+                            tag: tag
+                        });
+                    })
+                })
+                .then(() => console.log('tag deleted!'));
         },
         bindBoard: firestoreAction(({bindFirestoreRef}) => {
             return bindFirestoreRef("board", boardRef);
