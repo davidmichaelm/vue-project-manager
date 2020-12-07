@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <h1>Login</h1>
+    <h1 class="mb-3 text-center">Login or Sign Up</h1>
     <div id="auth"></div>
   </b-container>
 </template>
@@ -10,18 +10,29 @@ import firebase from "firebase/app";
 import * as firebaseui from "firebaseui";
 import "firebaseui/dist/firebaseui.css";
 import {mapActions} from "vuex";
+
 export default {
   name: "Login",
+  data() {
+    return {
+      ui: null
+    }
+  },
   methods: {
     ...mapActions([
-        "addNewUser"
+      "addNewUser"
     ])
   },
   mounted() {
-    const ui = new firebaseui.auth.AuthUI(firebase.auth());
+    if (this.$store.getters.isLoggedIn) {
+      this.$router.push("/myboards");
+      return;
+    }
+
+    this.ui = new firebaseui.auth.AuthUI(firebase.auth());
     const component = this;
-    ui.start("#auth", {
-      signInSuccessUrl: "/myboards",
+    const router = this.$router;
+    this.ui.start("#auth", {
       signInOptions: [{
         provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
         requireDisplayName: true
@@ -31,11 +42,18 @@ export default {
           if (authResult.additionalUserInfo.isNewUser) {
             component.addNewUser(authResult.user);
           }
-          return true;
+
+          router.push("/myboards");
+          return false;
         }
       }
-
     })
+
+  },
+  beforeDestroy() {
+    if (this.ui) {
+      this.ui.delete();
+    }
   }
 }
 </script>
