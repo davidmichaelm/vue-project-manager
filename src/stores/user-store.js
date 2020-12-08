@@ -132,7 +132,7 @@ export const userStore = {
                         ["roles." + userId]: "editor"
                     })
                     .then(() => {
-                        dispatch("fetchUsers")
+                        dispatch("fetchBoardUsers")
                             .then(() => resolve());
                     })
                     .catch((e) => reject(e));
@@ -144,7 +144,7 @@ export const userStore = {
                     ["roles." + userId]: firebase.firestore.FieldValue.delete()
                 })
                 .then(() => {
-                    dispatch("fetchUsers");
+                    dispatch("fetchBoardUsers");
                 });
         },
         getFilterByTags({getters, commit}) {
