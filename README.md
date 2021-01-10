@@ -4,6 +4,13 @@ Final project for Javascript 2 class.
 
 Built with Vue.js, Firebase, and Bootstrap.
 
+## Features
+* User authentication
+* Automatic cloud saving
+* Real-time collaboration on project boards with multiple users
+* Burndown chart to visualize progress
+* Add and filter by tags
+
 ## Project setup
 ```
 npm install
