@@ -4,6 +4,8 @@ Final project for Javascript 2 class.
 
 Built with Vue.js, Firebase, and Bootstrap.
 
+[Live Demo](https://vue-project-manager.netlify.app)
+
 ## Features
 * User authentication
 * Automatic cloud saving
