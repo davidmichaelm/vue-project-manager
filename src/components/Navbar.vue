@@ -1,7 +1,7 @@
 <template>
   <b-navbar toggleable="md" class="mb-3">
     <b-navbar-brand to="/">
-      Vue Project Manager
+      <img src="/vpm-icon.svg" height="40"/>
     </b-navbar-brand>
 
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
